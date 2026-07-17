@@ -9,14 +9,10 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="bg-white text-black">
-   <Navbar />
-
-{/* <HeroCarousel /> */}
-
+ <Navbar />
+<HeroCarousel />
 <CollectionGrid />
-
 <FeaturedBanner />
-
 <NewArrivals />
 <Footer />
     </main>
