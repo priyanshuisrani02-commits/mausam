@@ -12,14 +12,22 @@ export default function HomepageAdminPage() {
   const [slides, setSlides] =
     useState<HeroSlide[]>([]);
 
-  useEffect(() => {
-    setSlides(getHeroSlides());
-  }, []);
-
-  function handleDelete(id: string) {
-    deleteHeroSlide(id);
-    setSlides(getHeroSlides());
+ useEffect(() => {
+  async function loadSlides() {
+    const data = await getHeroSlides();
+    setSlides(data);
   }
+
+  loadSlides();
+}, []);
+
+  
+  async function handleDelete(id: string) {
+  await deleteHeroSlide(id);
+
+  const data = await getHeroSlides();
+  setSlides(data);
+}
 
   return (
    <AdminLayout>
