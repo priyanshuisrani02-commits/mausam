@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/lib/supabase";
 
 type Category = {
@@ -53,7 +52,9 @@ export default function EditProductPage() {
 
     setProductName(data.name);
     setPrice(String(data.price));
-    setSalePrice(data.sale_price ? String(data.sale_price) : "");
+    setSalePrice(
+      data.sale_price ? String(data.sale_price) : ""
+    );
     setSku(data.sku);
     setStock(String(data.stock));
     setCategoryId(data.category_id);
@@ -66,7 +67,9 @@ export default function EditProductPage() {
         name: productName,
         category_id: categoryId,
         price: Number(price),
-        sale_price: salePrice ? Number(salePrice) : null,
+        sale_price: salePrice
+          ? Number(salePrice)
+          : null,
         sku,
         stock: Number(stock),
       })
@@ -83,24 +86,20 @@ export default function EditProductPage() {
   }
 
   return (
-    <AdminLayout>
-
+    <>
       <h1 className="mb-10 text-5xl font-light">
         Edit Product
       </h1>
 
       <div className="rounded-[32px] bg-white p-10 shadow">
-
         <div className="grid gap-6">
-
           <input
             value={productName}
             onChange={(e) =>
               setProductName(e.target.value)
             }
             placeholder="Product Name"
-            className="rounded-xl border p-4"
-            style={{ color: "black" }}
+            className="rounded-xl border p-4 text-black"
           />
 
           <select
@@ -108,8 +107,7 @@ export default function EditProductPage() {
             onChange={(e) =>
               setCategoryId(e.target.value)
             }
-            className="rounded-xl border p-4"
-            style={{ color: "black" }}
+            className="rounded-xl border p-4 text-black"
           >
             {categories.map((category) => (
               <option
@@ -127,8 +125,7 @@ export default function EditProductPage() {
               setPrice(e.target.value)
             }
             placeholder="Price"
-            className="rounded-xl border p-4"
-            style={{ color: "black" }}
+            className="rounded-xl border p-4 text-black"
           />
 
           <input
@@ -137,8 +134,7 @@ export default function EditProductPage() {
               setSalePrice(e.target.value)
             }
             placeholder="Sale Price"
-            className="rounded-xl border p-4"
-            style={{ color: "black" }}
+            className="rounded-xl border p-4 text-black"
           />
 
           <input
@@ -147,8 +143,7 @@ export default function EditProductPage() {
               setSku(e.target.value)
             }
             placeholder="SKU"
-            className="rounded-xl border p-4"
-            style={{ color: "black" }}
+            className="rounded-xl border p-4 text-black"
           />
 
           <input
@@ -157,8 +152,7 @@ export default function EditProductPage() {
               setStock(e.target.value)
             }
             placeholder="Stock"
-            className="rounded-xl border p-4"
-            style={{ color: "black" }}
+            className="rounded-xl border p-4 text-black"
           />
 
           <button
@@ -167,11 +161,8 @@ export default function EditProductPage() {
           >
             Save Changes
           </button>
-
         </div>
-
       </div>
-
-    </AdminLayout>
+    </>
   );
 }

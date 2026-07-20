@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/lib/supabase";
 
 type Category = {
@@ -61,7 +60,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <AdminLayout>
+    <>
       <div className="mb-10 flex items-center justify-between">
         <h1 className="text-5xl font-light">
           Categories
@@ -76,55 +75,38 @@ export default function CategoriesPage() {
       </div>
 
       <div className="rounded-[32px] bg-white p-8 shadow">
-
         {loading ? (
-
           <p className="text-gray-500">
             Loading categories...
           </p>
-
         ) : categories.length === 0 ? (
-
           <p className="text-gray-500">
             No categories found.
           </p>
-
         ) : (
-
           <div className="space-y-5">
-
             {categories.map((category) => (
-
               <div
                 key={category.id}
                 className="flex items-center justify-between rounded-2xl border border-gray-200 p-5"
               >
-
                 <div className="flex items-center gap-5">
-
                   <div className="relative h-24 w-24 overflow-hidden rounded-xl border bg-gray-100">
-
                     {category.image_url ? (
-
                       <Image
                         src={category.image_url}
                         alt={category.name}
                         fill
                         className="object-cover"
                       />
-
                     ) : (
-
                       <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
                         No Image
                       </div>
-
                     )}
-
                   </div>
 
                   <div>
-
                     <h2 className="text-2xl font-medium text-black">
                       {category.name}
                     </h2>
@@ -134,7 +116,6 @@ export default function CategoriesPage() {
                     </p>
 
                     <div className="mt-3 flex flex-wrap items-center gap-2">
-
                       {category.show_on_homepage && (
                         <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
                           Homepage
@@ -144,15 +125,11 @@ export default function CategoriesPage() {
                       <span className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700">
                         Sort: {category.sort_order}
                       </span>
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <div className="flex gap-3">
-
                   <Link
                     href={`/admin/categories/${category.id}`}
                     className="rounded-lg border border-gray-300 px-5 py-2 transition hover:bg-gray-100"
@@ -166,18 +143,12 @@ export default function CategoriesPage() {
                   >
                     Delete
                   </button>
-
                 </div>
-
               </div>
-
             ))}
-
           </div>
-
         )}
-
       </div>
-    </AdminLayout>
+    </>
   );
 }

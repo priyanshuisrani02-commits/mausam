@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import AdminLayout from "@/components/admin/AdminLayout";
-
 import { saveHeroSlide } from "@/lib/admin-hero";
 import { uploadHeroImage } from "@/lib/upload-hero-image";
 
@@ -27,42 +25,32 @@ export default function NewHeroSlidePage() {
     try {
       setSaving(true);
 
-      console.log("Uploading image...");
+      const imageUrl = await uploadHeroImage(image);
 
-const imageUrl = await uploadHeroImage(image);
-
-console.log("Image uploaded:", imageUrl);
-
-console.log("Saving to database...");
-
-await saveHeroSlide({
-  imageUrl,
-  link,
-  sortOrder,
-  active,
-});
-
-console.log("Database save complete.");
+      await saveHeroSlide({
+        imageUrl,
+        link,
+        sortOrder,
+        active,
+      });
 
       alert("Hero slide created.");
 
       router.push("/admin/homepage/hero-slider");
       router.refresh();
     } catch (err: any) {
-  console.log("Full error:", err);
-  console.log("Message:", err.message);
-  console.log("Details:", err.details);
-  console.log("Hint:", err.hint);
-  console.log("Code:", err.code);
+      console.error("Failed to create hero slide:", err);
 
-  alert(JSON.stringify(err, null, 2));
-} finally {
-  setSaving(false);
-}
+      alert(
+        err?.message || "Failed to create hero slide."
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
-    <AdminLayout>
+    <>
       <div className="mb-10 flex items-center justify-between">
         <h1 className="text-5xl font-light">
           Add Hero Slide
@@ -79,7 +67,6 @@ console.log("Database save complete.");
 
       <div className="rounded-[32px] bg-white p-10 shadow">
         <div className="grid gap-8">
-
           <div>
             <label className="mb-2 block font-medium">
               Hero Image
@@ -88,7 +75,7 @@ console.log("Database save complete.");
             {preview && (
               <img
                 src={preview}
-                alt=""
+                alt="Hero slide preview"
                 className="mb-5 h-64 w-full rounded-2xl object-cover"
               />
             )}
@@ -117,8 +104,7 @@ console.log("Database save complete.");
               value={link}
               onChange={(e) => setLink(e.target.value)}
               placeholder="/categories/sarees"
-              className="w-full rounded-xl border border-gray-300 bg-white p-4"
-              style={{ color: "black" }}
+              className="w-full rounded-xl border border-gray-300 bg-white p-4 text-black"
             />
           </div>
 
@@ -133,8 +119,7 @@ console.log("Database save complete.");
               onChange={(e) =>
                 setSortOrder(Number(e.target.value))
               }
-              className="w-full rounded-xl border border-gray-300 bg-white p-4"
-              style={{ color: "black" }}
+              className="w-full rounded-xl border border-gray-300 bg-white p-4 text-black"
             />
           </div>
 
@@ -151,6 +136,6 @@ console.log("Database save complete.");
           </label>
         </div>
       </div>
-    </AdminLayout>
+    </>
   );
 }

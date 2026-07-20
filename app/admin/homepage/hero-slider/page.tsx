@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import AdminLayout from "@/components/admin/AdminLayout";
-
 import {
   getHeroSlides,
   deleteHeroSlide,
@@ -44,7 +42,7 @@ export default function HeroSliderPage() {
   }
 
   return (
-    <AdminLayout>
+    <>
       <div className="mb-10 flex items-center justify-between">
         <h1 className="text-5xl font-light text-black">
           Hero Slider
@@ -113,6 +111,6 @@ export default function HeroSliderPage() {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
-} 
+}

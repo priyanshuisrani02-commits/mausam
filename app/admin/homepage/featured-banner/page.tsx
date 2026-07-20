@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import {
   getActiveBanner,
   deleteBanner,
@@ -65,8 +64,8 @@ export default function FeaturedBannerPage() {
   }
 
   return (
-    <AdminLayout>
-      <div className="flex items-center justify-between mb-8">
+    <>
+      <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-stone-900">
             Featured Banner
@@ -177,6 +176,6 @@ export default function FeaturedBannerPage() {
           </div>
         </div>
       )}
-    </AdminLayout>
+    </>
   );
 }

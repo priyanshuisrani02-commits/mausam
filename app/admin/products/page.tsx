@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/lib/supabase";
 
 type Product = {
@@ -50,9 +49,11 @@ export default function ProductsPage() {
   }, []);
 
   return (
-    <AdminLayout>
+    <>
       <div className="mb-10 flex items-center justify-between">
-        <h1 className="text-5xl font-light">Products</h1>
+        <h1 className="text-5xl font-light">
+          Products
+        </h1>
 
         <Link
           href="/admin/products/new"
@@ -64,20 +65,28 @@ export default function ProductsPage() {
 
       <div className="overflow-hidden rounded-[32px] bg-white shadow">
         <table className="w-full">
-
           <thead>
             <tr className="border-b">
-              <th className="p-6 text-left">Product</th>
-              <th className="p-6 text-left">Price</th>
-              <th className="p-6 text-left">Stock</th>
-              <th className="p-6 text-left">Actions</th>
+              <th className="p-6 text-left">
+                Product
+              </th>
+
+              <th className="p-6 text-left">
+                Price
+              </th>
+
+              <th className="p-6 text-left">
+                Stock
+              </th>
+
+              <th className="p-6 text-left">
+                Actions
+              </th>
             </tr>
           </thead>
 
           <tbody>
-
             {products.length === 0 ? (
-
               <tr>
                 <td
                   colSpan={4}
@@ -86,16 +95,15 @@ export default function ProductsPage() {
                   No products found.
                 </td>
               </tr>
-
             ) : (
-
               products.map((product) => (
-
                 <tr
                   key={product.id}
                   className="border-b"
                 >
-                  <td className="p-6">{product.name}</td>
+                  <td className="p-6">
+                    {product.name}
+                  </td>
 
                   <td className="p-6">
                     ₹{product.price}
@@ -106,37 +114,30 @@ export default function ProductsPage() {
                   </td>
 
                   <td className="p-6">
+                    <div className="flex gap-3">
+                      <Link
+                        href={`/admin/products/edit/${product.id}`}
+                        className="rounded-full border px-4 py-2"
+                      >
+                        Edit
+                      </Link>
 
-                  <div className="flex gap-3">
-
-  <Link
-    href={`/admin/products/edit/${product.id}`}
-    className="rounded-full border px-4 py-2"
-  >
-    Edit
-  </Link>
-
-  <button
-    onClick={() => handleDelete(product.id)}
-    className="rounded-full border border-red-500 px-4 py-2 text-red-500"
-  >
-    Delete
-  </button>
-
-</div>
-
+                      <button
+                        onClick={() =>
+                          handleDelete(product.id)
+                        }
+                        className="rounded-full border border-red-500 px-4 py-2 text-red-500"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
-
                 </tr>
-
               ))
-
             )}
-
           </tbody>
-
         </table>
       </div>
-    </AdminLayout>
+    </>
   );
 }

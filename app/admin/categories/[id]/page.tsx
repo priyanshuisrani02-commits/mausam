@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
-import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/lib/supabase";
 import { uploadCategoryImage } from "@/lib/upload-category-image";
 
@@ -39,7 +38,6 @@ export default function EditCategoryPage() {
   const [slug, setSlug] = useState("");
 
   const [image, setImage] = useState<File | null>(null);
-
   const [preview, setPreview] = useState("");
 
   const [showOnHomepage, setShowOnHomepage] =
@@ -118,22 +116,19 @@ export default function EditCategoryPage() {
 
   if (loading) {
     return (
-      <AdminLayout>
-        <div className="p-10 text-lg">
-          Loading category...
-        </div>
-      </AdminLayout>
+      <div className="p-10 text-lg">
+        Loading category...
+      </div>
     );
   }
 
   return (
-    <AdminLayout>
+    <>
       <h1 className="mb-10 text-5xl font-light">
         Edit Category
       </h1>
 
       <div className="rounded-[32px] bg-white p-10 shadow">
-
         <label className="mb-2 block font-medium">
           Category Name
         </label>
@@ -192,7 +187,6 @@ export default function EditCategoryPage() {
         )}
 
         <label className="mb-6 flex items-center gap-3">
-
           <input
             type="checkbox"
             checked={showOnHomepage}
@@ -202,7 +196,6 @@ export default function EditCategoryPage() {
           />
 
           Show on Homepage
-
         </label>
 
         <label className="mb-2 block font-medium">
@@ -219,7 +212,6 @@ export default function EditCategoryPage() {
         />
 
         <div className="flex gap-4">
-
           <button
             onClick={handleSave}
             disabled={saving}
@@ -236,10 +228,8 @@ export default function EditCategoryPage() {
           >
             Cancel
           </button>
-
         </div>
-
       </div>
-    </AdminLayout>
+    </>
   );
 }

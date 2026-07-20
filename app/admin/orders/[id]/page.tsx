@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/lib/supabase";
 
 type Order = {
@@ -91,31 +90,32 @@ export default function OrderDetailsPage() {
   }
 
   if (!order) {
-    return (
-      <AdminLayout>
-        <div className="p-10">Loading...</div>
-      </AdminLayout>
-    );
+    return <div className="p-10">Loading...</div>;
   }
 
   return (
-    <AdminLayout>
-
+    <>
       <h1 className="mb-10 text-5xl font-light">
         Order Details
       </h1>
 
       <div className="grid grid-cols-3 gap-8">
-
         <div className="rounded-3xl bg-white p-8 shadow">
-
           <h2 className="mb-6 text-2xl font-medium">
             Customer
           </h2>
 
-          <p><strong>Name:</strong> {order.customer_name}</p>
-          <p><strong>Email:</strong> {order.email}</p>
-          <p><strong>Phone:</strong> {order.phone}</p>
+          <p>
+            <strong>Name:</strong> {order.customer_name}
+          </p>
+
+          <p>
+            <strong>Email:</strong> {order.email}
+          </p>
+
+          <p>
+            <strong>Phone:</strong> {order.phone}
+          </p>
 
           <div className="mt-6">
             <strong>Address</strong>
@@ -124,21 +124,16 @@ export default function OrderDetailsPage() {
             <p>{order.state}</p>
             <p>{order.pincode}</p>
           </div>
-
         </div>
 
         <div className="col-span-2 rounded-3xl bg-white p-8 shadow">
-
           <h2 className="mb-6 text-2xl font-medium">
             Products
           </h2>
 
           <table className="w-full">
-
             <thead>
-
               <tr className="border-b">
-
                 <th className="p-4 text-left">
                   Product
                 </th>
@@ -154,20 +149,15 @@ export default function OrderDetailsPage() {
                 <th className="p-4 text-left">
                   Price
                 </th>
-
               </tr>
-
             </thead>
 
             <tbody>
-
               {items.map((item, index) => (
-
                 <tr
                   key={index}
                   className="border-b"
                 >
-
                   <td className="p-4">
                     {item.products.name}
                   </td>
@@ -183,17 +173,12 @@ export default function OrderDetailsPage() {
                   <td className="p-4">
                     ₹{item.price}
                   </td>
-
                 </tr>
-
               ))}
-
             </tbody>
-
           </table>
 
           <div className="my-8">
-
             <label className="mb-2 block font-medium">
               Order Status
             </label>
@@ -209,11 +194,9 @@ export default function OrderDetailsPage() {
               <option>Delivered</option>
               <option>Cancelled</option>
             </select>
-
           </div>
 
           <div className="border-t pt-6">
-
             <div className="flex justify-between">
               <span>Subtotal</span>
               <span>₹{order.subtotal}</span>
@@ -228,13 +211,9 @@ export default function OrderDetailsPage() {
               <span>Total</span>
               <span>₹{order.total}</span>
             </div>
-
           </div>
-
         </div>
-
       </div>
-
-    </AdminLayout>
+    </>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/lib/supabase";
 
 type Order = {
@@ -36,24 +35,17 @@ export default function OrdersPage() {
   }
 
   return (
-    <AdminLayout>
-
+    <>
       <div className="mb-10">
-
         <h1 className="text-5xl font-light">
           Orders
         </h1>
-
       </div>
 
       <div className="overflow-hidden rounded-[32px] bg-white shadow">
-
         <table className="w-full">
-
           <thead>
-
             <tr className="border-b">
-
               <th className="p-6 text-left">
                 Customer
               </th>
@@ -77,35 +69,25 @@ export default function OrdersPage() {
               <th className="p-6 text-left">
                 Action
               </th>
-
             </tr>
-
           </thead>
 
           <tbody>
-
             {orders.length === 0 ? (
-
               <tr>
-
                 <td
                   colSpan={6}
                   className="p-12 text-center text-gray-500"
                 >
                   No orders yet.
                 </td>
-
               </tr>
-
             ) : (
-
               orders.map((order) => (
-
                 <tr
                   key={order.id}
                   className="border-b"
                 >
-
                   <td className="p-6">
                     {order.customer_name}
                   </td>
@@ -119,42 +101,31 @@ export default function OrdersPage() {
                   </td>
 
                   <td className="p-6">
-
                     <span className="rounded-full bg-yellow-100 px-4 py-2 text-sm">
-
                       {order.status}
-
                     </span>
-
                   </td>
 
                   <td className="p-6">
-                    {new Date(order.created_at).toLocaleDateString()}
+                    {new Date(
+                      order.created_at
+                    ).toLocaleDateString()}
                   </td>
 
                   <td className="p-6">
-
                     <Link
                       href={`/admin/orders/${order.id}`}
                       className="rounded-full border px-4 py-2 hover:bg-gray-100"
                     >
                       View
                     </Link>
-
                   </td>
-
                 </tr>
-
               ))
-
             )}
-
           </tbody>
-
         </table>
-
       </div>
-
-    </AdminLayout>
+    </>
   );
 }

@@ -1,93 +1,64 @@
 "use client";
-import AdminLayout from "@/components/admin/AdminLayout";
+
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import {
-  getHeroSlides,
-  deleteHeroSlide,
-  type HeroSlide,
-} from "@/lib/admin-hero";
 
 export default function HomepageAdminPage() {
-  const [slides, setSlides] =
-    useState<HeroSlide[]>([]);
-
- useEffect(() => {
-  async function loadSlides() {
-    const data = await getHeroSlides();
-    setSlides(data);
-  }
-
-  loadSlides();
-}, []);
-
-  
-  async function handleDelete(id: string) {
-  await deleteHeroSlide(id);
-
-  const data = await getHeroSlides();
-  setSlides(data);
-}
-
   return (
-   <AdminLayout>
+    <>
       <h1 className="mb-10 text-5xl font-light text-black">
-  Homepage
-</h1>
+        Homepage
+      </h1>
 
-<div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6">
+        <Link
+          href="/admin/homepage/hero-slider"
+          className="block rounded-[28px] bg-white p-8 shadow transition hover:shadow-lg"
+        >
+          <h2 className="text-3xl font-light">
+            🖼 Hero Slider
+          </h2>
 
-  <Link
-  href="/admin/homepage/hero-slider"
-  className="rounded-[28px] bg-white p-8 shadow transition hover:shadow-lg block"
->
-  <h2 className="text-3xl font-light">
-    🖼 Hero Slider
-  </h2>
+          <p className="mt-3 text-gray-500">
+            Manage hero slides.
+          </p>
+        </Link>
 
-  <p className="mt-3 text-gray-500">
-    Manage hero slides.
-  </p>
-</Link> 
- 
-  
- <Link
-  href="/admin/categories"
-  className="rounded-[28px] bg-white p-8 shadow transition hover:shadow-lg block"
->
-  <h2 className="text-3xl font-light">
-   🏷️ Categories
-  </h2>
+        <Link
+          href="/admin/categories"
+          className="block rounded-[28px] bg-white p-8 shadow transition hover:shadow-lg"
+        >
+          <h2 className="text-3xl font-light">
+            🏷️ Categories
+          </h2>
 
-  <p className="mt-3 text-gray-500">
-   Manage homepage categories.
-  </p>
-</Link>
+          <p className="mt-3 text-gray-500">
+            Manage homepage categories.
+          </p>
+        </Link>
 
-  <Link
-  href="/admin/homepage/featured-banner"
-  className="rounded-[28px] bg-white p-8 shadow transition hover:shadow-lg block"
->
-  <h2 className="text-3xl font-light">
-    ⭐ Featured Banner
-  </h2>
+        <Link
+          href="/admin/homepage/featured-banner"
+          className="block rounded-[28px] bg-white p-8 shadow transition hover:shadow-lg"
+        >
+          <h2 className="text-3xl font-light">
+            ⭐ Featured Banner
+          </h2>
 
-  <p className="mt-3 text-gray-500">
-    Manage featured banner.
-  </p>
-</Link>
+          <p className="mt-3 text-gray-500">
+            Manage featured banner.
+          </p>
+        </Link>
 
-  <div className="rounded-[28px] bg-white p-8 shadow">
-    <h2 className="text-3xl font-light">
-      📢 Announcement Bar
-    </h2>
+        <div className="rounded-[28px] bg-white p-8 shadow">
+          <h2 className="text-3xl font-light">
+            📢 Announcement Bar
+          </h2>
 
-    <p className="mt-3 text-gray-500">
-      Manage announcement bar.
-    </p>
-  </div>
-
-</div>
-    </AdminLayout>
+          <p className="mt-3 text-gray-500">
+            Manage announcement bar.
+          </p>
+        </div>
+      </div>
+    </>
   );
 }

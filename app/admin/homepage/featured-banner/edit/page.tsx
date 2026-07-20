@@ -4,8 +4,6 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-import AdminLayout from "@/components/admin/AdminLayout";
-
 import {
   getActiveBanner,
   saveBanner,
@@ -21,7 +19,7 @@ type FeaturedBanner = {
   subtitle: string | null;
   description: string;
   button_text: string;
-  button_link: string |null;
+  button_link: string | null;
   image_url: string;
   active: boolean;
   created_at?: string;
@@ -46,7 +44,8 @@ export default function EditFeaturedBannerPage() {
   useEffect(() => {
     async function loadBanner() {
       try {
-        const banner = (await getActiveBanner()) as FeaturedBanner | null;
+        const banner =
+          (await getActiveBanner()) as FeaturedBanner | null;
 
         if (banner) {
           setBannerId(banner.id);
@@ -169,170 +168,164 @@ export default function EditFeaturedBannerPage() {
 
   if (loading) {
     return (
-      <AdminLayout>
-        <div className="rounded-xl border border-stone-200 bg-white p-10 text-center">
-          Loading...
-        </div>
-      </AdminLayout>
+      <div className="rounded-xl border border-stone-200 bg-white p-10 text-center">
+        Loading...
+      </div>
     );
   }
 
   return (
-    <AdminLayout>
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-stone-900">
-            {bannerId ? "Edit Banner" : "Create Banner"}
-          </h1>
+    <div className="mx-auto max-w-4xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-stone-900">
+          {bannerId ? "Edit Banner" : "Create Banner"}
+        </h1>
 
-          <p className="mt-2 text-stone-600">
-            Manage the homepage featured banner.
-          </p>
+        <p className="mt-2 text-stone-600">
+          Manage the homepage featured banner.
+        </p>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 rounded-xl border border-stone-200 bg-white p-8 shadow-sm"
+      >
+        <div>
+          <label className="mb-2 block font-medium text-stone-700">
+            Title
+          </label>
+
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full rounded-lg border border-stone-300 px-4 py-3 outline-none focus:border-black"
+            required
+          />
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-8 rounded-xl border border-stone-200 bg-white p-8 shadow-sm"
-        >
-          <div>
-            <label className="mb-2 block font-medium text-stone-700">
-              Title
-            </label>
+        <div>
+          <label className="mb-2 block font-medium text-stone-700">
+            Description
+          </label>
 
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-lg border border-stone-300 px-4 py-3 outline-none focus:border-black"
-              required
-            />
-          </div>
+          <textarea
+            rows={5}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full rounded-lg border border-stone-300 px-4 py-3 outline-none focus:border-black"
+            required
+          />
+        </div>
 
-          <div>
-            <label className="mb-2 block font-medium text-stone-700">
-              Description
-            </label>
+        <div>
+          <label className="mb-2 block font-medium text-stone-700">
+            Button Text
+          </label>
 
-            <textarea
-              rows={5}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full rounded-lg border border-stone-300 px-4 py-3 outline-none focus:border-black"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            value={buttonText}
+            onChange={(e) => setButtonText(e.target.value)}
+            className="w-full rounded-lg border border-stone-300 px-4 py-3 outline-none focus:border-black"
+            required
+          />
+        </div>
 
-          <div>
-            <label className="mb-2 block font-medium text-stone-700">
-              Button Text
-            </label>
+        <div>
+          <label className="mb-2 block font-medium text-stone-700">
+            Button Link
+          </label>
 
-            <input
-              type="text"
-              value={buttonText}
-              onChange={(e) => setButtonText(e.target.value)}
-              className="w-full rounded-lg border border-stone-300 px-4 py-3 outline-none focus:border-black"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            value={buttonLink}
+            onChange={(e) => setButtonLink(e.target.value)}
+            className="w-full rounded-lg border border-stone-300 px-4 py-3 outline-none focus:border-black"
+            placeholder="/collections"
+          />
+        </div>
 
-          <div>
-            <label className="mb-2 block font-medium text-stone-700">
-              Button Link
-            </label>
+        <div>
+          <label className="mb-2 block font-medium text-stone-700">
+            Banner Image
+          </label>
 
-            <input
-              type="text"
-              value={buttonLink}
-              onChange={(e) => setButtonLink(e.target.value)}
-              className="w-full rounded-lg border border-stone-300 px-4 py-3 outline-none focus:border-black"
-              placeholder="/collections"
-            />
-          </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="block w-full rounded-lg border border-stone-300 px-4 py-3"
+          />
 
-          <div>
-            <label className="mb-2 block font-medium text-stone-700">
-              Banner Image
-            </label>
+          {uploading && (
+            <p className="mt-3 text-sm text-stone-500">
+              Uploading image...
+            </p>
+          )}
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="block w-full rounded-lg border border-stone-300 px-4 py-3"
-            />
+          {imageUrl && (
+            <div className="relative mt-6 h-64 overflow-hidden rounded-lg border border-stone-200">
+              <Image
+                src={imageUrl}
+                alt="Banner Preview"
+                fill
+                unoptimized
+                className="object-cover"
+              />
+            </div>
+          )}
+        </div>
 
-            {uploading && (
-              <p className="mt-3 text-sm text-stone-500">
-                Uploading image...
-              </p>
-            )}
+        <div className="flex items-center gap-3">
+          <input
+            id="active"
+            type="checkbox"
+            checked={active}
+            onChange={(e) => setActive(e.target.checked)}
+            className="h-5 w-5"
+          />
 
-            {imageUrl && (
-              <div className="relative mt-6 h-64 overflow-hidden rounded-lg border border-stone-200">
-                <Image
-                  src={imageUrl}
-                  alt="Banner Preview"
-                  fill
-                  unoptimized
-                  className="object-cover"
-                />
-              </div>
-            )}
-          </div>
+          <label
+            htmlFor="active"
+            className="font-medium text-stone-700"
+          >
+            Active Banner
+          </label>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <input
-              id="active"
-              type="checkbox"
-              checked={active}
-              onChange={(e) => setActive(e.target.checked)}
-              className="h-5 w-5"
-            />
+        <div className="flex flex-wrap gap-4 pt-4">
+          <button
+            type="submit"
+            disabled={saving || uploading}
+            className="rounded-lg bg-black px-6 py-3 font-medium text-white transition hover:bg-stone-800 disabled:opacity-50"
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
 
-            <label
-              htmlFor="active"
-              className="font-medium text-stone-700"
-            >
-              Active Banner
-            </label>
-          </div>
-
-          <div className="flex flex-wrap gap-4 pt-4">
-            <button
-              type="submit"
-              disabled={saving || uploading}
-              className="rounded-lg bg-black px-6 py-3 font-medium text-white transition hover:bg-stone-800 disabled:opacity-50"
-            >
-              {saving
-                ? "Saving..."
-                : "Save Changes"}
-            </button>
-
-            {bannerId && (
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="rounded-lg bg-red-600 px-6 py-3 font-medium text-white transition hover:bg-red-700"
-              >
-                Delete Banner
-              </button>
-            )}
-
+          {bannerId && (
             <button
               type="button"
-              onClick={() =>
-                router.push(
-                  "/admin/homepage/featured-banner"
-                )
-              }
-              className="rounded-lg border border-stone-300 px-6 py-3 font-medium hover:bg-stone-100"
+              onClick={handleDelete}
+              className="rounded-lg bg-red-600 px-6 py-3 font-medium text-white transition hover:bg-red-700"
             >
-              Cancel
+              Delete Banner
             </button>
-          </div>
-        </form>
-      </div>
-    </AdminLayout>
+          )}
+
+          <button
+            type="button"
+            onClick={() =>
+              router.push(
+                "/admin/homepage/featured-banner"
+              )
+            }
+            className="rounded-lg border border-stone-300 px-6 py-3 font-medium hover:bg-stone-100"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

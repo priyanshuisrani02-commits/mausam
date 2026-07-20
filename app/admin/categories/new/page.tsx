@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/lib/supabase";
 import { uploadCategoryImage } from "@/lib/upload-category-image";
 
@@ -72,8 +71,10 @@ export default function NewCategoryPage() {
   }
 
   return (
-    <AdminLayout>
-      <h1 className="mb-10 text-5xl font-light">Add Category</h1>
+    <>
+      <h1 className="mb-10 text-5xl font-light">
+        Add Category
+      </h1>
 
       <div className="rounded-[32px] bg-white p-10 shadow">
         <label className="mb-2 block font-medium">
@@ -97,7 +98,9 @@ export default function NewCategoryPage() {
 
         <input
           value={slug}
-          onChange={(e) => setSlug(slugify(e.target.value))}
+          onChange={(e) =>
+            setSlug(slugify(e.target.value))
+          }
           placeholder="dresses"
           className="mb-6 w-full rounded-xl border border-gray-300 bg-white p-4 text-black"
         />
@@ -136,7 +139,9 @@ export default function NewCategoryPage() {
           <input
             type="checkbox"
             checked={showOnHomepage}
-            onChange={(e) => setShowOnHomepage(e.target.checked)}
+            onChange={(e) =>
+              setShowOnHomepage(e.target.checked)
+            }
           />
 
           Show on Homepage
@@ -149,7 +154,9 @@ export default function NewCategoryPage() {
         <input
           type="number"
           value={sortOrder}
-          onChange={(e) => setSortOrder(Number(e.target.value))}
+          onChange={(e) =>
+            setSortOrder(Number(e.target.value))
+          }
           className="mb-8 w-full rounded-xl border border-gray-300 bg-white p-4 text-black"
         />
 
@@ -161,6 +168,6 @@ export default function NewCategoryPage() {
           {saving ? "Saving..." : "Save Category"}
         </button>
       </div>
-    </AdminLayout>
+    </>
   );
 }
