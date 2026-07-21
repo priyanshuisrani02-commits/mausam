@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { AuthProvider } from "@/context/AuthContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import { CartProvider } from "@/context/CartContext";
+
 import WhatsAppButton from "@/components/WhatsAppButton";
 // import CartDrawer from "@/components/CartDrawer";
 
@@ -34,7 +37,7 @@ export const metadata: Metadata = {
     "Indian Fashion",
     "Ethnic Wear",
   ],
-}; 
+};
 
 export default function RootLayout({
   children,
@@ -48,14 +51,23 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
 
-        <CartProvider>
-          {/* <CartDrawer /> */}
+        <AuthProvider>
 
-          {children}
+          <WishlistProvider>
 
-          <WhatsAppButton />
+            <CartProvider>
 
-        </CartProvider>
+              {/* <CartDrawer /> */}
+
+              {children}
+
+              <WhatsAppButton />
+
+            </CartProvider>
+
+          </WishlistProvider>
+
+        </AuthProvider>
 
       </body>
     </html>

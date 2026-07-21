@@ -16,9 +16,6 @@ export default function NewArrivals() {
   useEffect(() => {
     async function loadProducts() {
       const data = await getStoreProducts();
-
-      console.log("Store products:", data);
-
       setProducts(data);
     }
 
@@ -41,10 +38,11 @@ export default function NewArrivals() {
           products.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               name={product.name}
               price={product.price}
               image={product.image}
-              slug={product.id}
+              slug={product.slug}
             />
           ))
         )}
@@ -72,13 +70,16 @@ export default function NewArrivals() {
           products.map((product) => (
             <Link
               key={product.id}
-              href={`/products/${product.id}`}
+              href={`/products/${product.slug}`}
               className="w-[84vw] shrink-0 snap-center"
             >
               <div className="overflow-hidden rounded-xl bg-white">
                 <div className="relative">
                   <img
-                    src={product.image}
+                    src={
+                      product.image ||
+                      "/images/products/product1.png"
+                    }
                     alt={product.name}
                     className="h-[420px] w-full object-cover"
                   />
@@ -94,7 +95,7 @@ export default function NewArrivals() {
                   </h3>
 
                   <p className="mt-2 text-base text-gray-700">
-                    ₹{product.price}
+                    ₹{product.price.toLocaleString("en-IN")}
                   </p>
                 </div>
               </div>
