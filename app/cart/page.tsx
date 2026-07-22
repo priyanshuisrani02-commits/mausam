@@ -8,6 +8,8 @@ import {
   removeCartItem,
 } from "@/lib/cart-actions";
 import Footer from "@/components/Footer";
+import { useCart } from "@/context/CartContext";
+
 type CartItem = {
   id: string;
   quantity: number;
@@ -22,7 +24,7 @@ type CartItem = {
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
-
+const { refreshCart } = useCart();
   async function loadCart() {
     const data = await getCartItems();
     setItems(data as any);
@@ -105,12 +107,12 @@ export default function CartPage() {
                       onClick={async () => {
                         if (item.quantity === 1) return;
 
-                        await updateCartQuantity(
-                          item.id,
-                          item.quantity - 1
-                        );
-
-                        loadCart();
+                       await updateCartQuantity(
+                         item.id,
+                         item.quantity - 1
+                                        );
+                    await loadCart();
+                    await refreshCart();
                       }}
                       className="h-10 w-10 rounded-full border"
                     >
@@ -121,12 +123,13 @@ export default function CartPage() {
 
                     <button
                       onClick={async () => {
-                        await updateCartQuantity(
-                          item.id,
-                          item.quantity + 1
-                        );
+                       await updateCartQuantity(
+  item.id,
+  item.quantity + 1
+);
 
-                        loadCart();
+await loadCart();
+await refreshCart();
                       }}
                       className="h-10 w-10 rounded-full border"
                     >
@@ -137,7 +140,8 @@ export default function CartPage() {
                       onClick={async () => {
                         await removeCartItem(item.id);
 
-                        loadCart();
+await loadCart();
+await refreshCart();
                       }}
                      className="text-red-500 md:ml-6"
                     >

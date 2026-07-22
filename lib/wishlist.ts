@@ -1,16 +1,27 @@
 import { supabase } from "@/lib/supabase";
 
+export type WishlistProduct = {
+  product_id: string;
+  products: {
+    id: string;
+    name: string;
+    price: number;
+    slug: string;
+    image: string;
+  } | null;
+};
+
 async function getCurrentUserId() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return null;
-
-  return user.id;
+  return user?.id ?? null;
 }
 
-export async function getWishlist() {
+export async function getWishlist(): Promise<
+  WishlistProduct[]
+> {
   const userId = await getCurrentUserId();
 
   if (!userId) return [];
@@ -19,13 +30,47 @@ export async function getWishlist() {
     .from("wishlists")
     .select(`
       product_id,
-      products (*)
+      products (
+        id,
+        name,
+        price,
+        slug
+      )
     `)
     .eq("user_id", userId);
 
   if (error) throw error;
 
-  return data ?? [];
+  const { data: images } = await supabase
+    .from("product_images")
+    .select("product_id, image_url");
+
+  return (data ?? []).map((item: any) => {
+    const product = Array.isArray(item.products)
+      ? item.products[0] ?? null
+      : item.products;
+
+    if (!product) {
+      return {
+        product_id: item.product_id,
+        products: null,
+      };
+    }
+
+    const firstImage = images?.find(
+      (img) => img.product_id === product.id
+    );
+
+    return {
+      product_id: item.product_id,
+      products: {
+        ...product,
+        image:
+          firstImage?.image_url ??
+          "/images/placeholder.png",
+      },
+    };
+  });
 }
 
 export async function addToWishlist(

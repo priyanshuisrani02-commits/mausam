@@ -1,5 +1,17 @@
 import { supabase } from "./supabase";
 
+async function getCurrentUserId() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Please login first.");
+  }
+
+  return user.id;
+}
+
 export async function placeOrder(customer: {
   customer_name: string;
   email: string;
@@ -9,7 +21,9 @@ export async function placeOrder(customer: {
   state: string;
   pincode: string;
 }) {
-  // 1. Load cart
+  const userId = await getCurrentUserId();
+
+  // Load current user's cart
   const { data: cartItems, error: cartError } = await supabase
     .from("cart_items")
     .select(`
@@ -21,7 +35,8 @@ export async function placeOrder(customer: {
         name,
         price
       )
-    `);
+    `)
+    .eq("user_id", userId);
 
   if (cartError) throw cartError;
 
@@ -29,7 +44,7 @@ export async function placeOrder(customer: {
     throw new Error("Cart is empty.");
   }
 
-  // 2. Calculate totals
+  // Calculate totals
   const subtotal = cartItems.reduce(
     (total: number, item: any) =>
       total + Number(item.products.price) * item.quantity,
@@ -39,11 +54,12 @@ export async function placeOrder(customer: {
   const shipping = 0;
   const total = subtotal + shipping;
 
-  // 3. Create order
+  // Create order
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert([
       {
+        user_id: userId,
         ...customer,
         subtotal,
         shipping,
@@ -55,7 +71,7 @@ export async function placeOrder(customer: {
 
   if (orderError) throw orderError;
 
-  // 4. Create order items
+  // Create order items
   const orderItems = cartItems.map((item: any) => ({
     order_id: order.id,
     product_id: item.products.id,
@@ -70,21 +86,19 @@ export async function placeOrder(customer: {
 
   if (itemsError) throw itemsError;
 
-  // 5. Clear cart
-  const cartIds = cartItems.map((item: any) => item.id);
-
+  // Clear user's cart
   const { error: clearError } = await supabase
     .from("cart_items")
     .delete()
-    .in("id", cartIds);
+    .eq("user_id", userId);
 
   if (clearError) throw clearError;
 
- return {
-  id: order.id,
-  subtotal,
-  shipping,
-  total,
-  customer,
-};
+  return {
+    id: order.id,
+    subtotal,
+    shipping,
+    total,
+    customer,
+  };
 }

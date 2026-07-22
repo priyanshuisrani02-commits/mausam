@@ -52,7 +52,7 @@ export default function ProductCard({
   }
 
   return (
-    <Link href={`/products/${slug}`}>
+   <Link href={`/products/${id}`}>
       <div className="group cursor-pointer">
 
         <div className="relative overflow-hidden rounded-3xl">

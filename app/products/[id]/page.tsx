@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { addToCart } from "@/lib/cart";
 import Footer from "@/components/Footer";
+import { useCart } from "@/context/CartContext";
+
 type Product = {
   id: string;
   name: string;
@@ -16,7 +18,7 @@ type Product = {
 
 export default function ProductPage() {
   const { id } = useParams();
-
+const { refreshCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedImage, setSelectedImage] = useState("");
 const [selectedSize, setSelectedSize] = useState("M");
@@ -182,16 +184,18 @@ className="h-[420px] w-full rounded-3xl object-cover md:h-auto"
  <button
   onClick={async () => {
     try {
-      await addToCart(
-        product!.id,
-        quantity,
-        selectedSize
-      );
+  await addToCart(
+    product!.id,
+    quantity,
+    selectedSize
+  );
 
-      alert("Added to cart!");
-    } catch (err: any) {
-      alert(err.message);
-    }
+  await refreshCart();
+
+  alert("Added to cart!");
+} catch (err: any) {
+  alert(err.message);
+}
   }}
  className="w-full rounded-full bg-black px-10 py-4 text-white transition hover:bg-gray-800 md:w-auto"
 >

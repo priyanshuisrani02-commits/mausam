@@ -104,7 +104,7 @@ Please send me your payment details.`;
         <div className="text-center">
           <div className="mb-5 text-5xl md:text-7xl">🎉</div>
 
-          <h1>className="text-3xl font-light leading-tight md:text-5xl"
+          <h1> className="text-3xl font-light leading-tight md:text-5xl"
             Order Placed Successfully
           </h1>
 

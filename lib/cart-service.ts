@@ -1,6 +1,20 @@
 import { supabase } from "./supabase";
 
+async function getCurrentUserId() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Please login first.");
+  }
+
+  return user.id;
+}
+
 export async function getCartItems() {
+  const userId = await getCurrentUserId();
+
   const { data, error } = await supabase
     .from("cart_items")
     .select(`
@@ -12,7 +26,8 @@ export async function getCartItems() {
         name,
         price
       )
-    `);
+    `)
+    .eq("user_id", userId);
 
   if (error) throw error;
 
