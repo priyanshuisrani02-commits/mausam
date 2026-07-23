@@ -22,13 +22,14 @@ export default function Navbar() {
   const router = useRouter();
 
   const { cart } = useCart();
-
   const { wishlist } = useWishlist();
 
   useEffect(() => {
     async function loadCategories() {
       try {
-        const data = await getCategories();
+        const data =
+          await getCategories();
+
         setCategories(data);
       } catch (err) {
         console.error(err);
@@ -38,12 +39,16 @@ export default function Navbar() {
     loadCategories();
   }, []);
 
-  function handleSearch(e: React.FormEvent) {
+  function handleSearch(
+    e: React.FormEvent
+  ) {
     e.preventDefault();
 
     if (query.trim()) {
       router.push(
-        `/search?q=${encodeURIComponent(query)}`
+        `/search?q=${encodeURIComponent(
+          query
+        )}`
       );
     }
   }
@@ -54,7 +59,8 @@ export default function Navbar() {
     0
   );
 
-  const wishlistCount = wishlist.length;
+  const wishlistCount =
+    wishlist.length;
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
@@ -69,7 +75,7 @@ export default function Navbar() {
 
             <Link
               href="/"
-              className="text-3xl font-light tracking-[8px] uppercase text-black md:text-5xl md:tracking-[18px]"
+              className="text-3xl font-light uppercase tracking-[8px] text-black md:text-5xl md:tracking-[18px]"
             >
               MAUSAM
             </Link>
@@ -83,7 +89,9 @@ export default function Navbar() {
                 placeholder="Search for products..."
                 value={query}
                 onChange={(e) =>
-                  setQuery(e.target.value)
+                  setQuery(
+                    e.target.value
+                  )
                 }
                 className="w-80 rounded-full border px-4 py-2 text-black outline-none lg:w-96"
               />
@@ -97,7 +105,8 @@ export default function Navbar() {
                 href="/wishlist"
                 className="hover:underline"
               >
-                ❤️ Wishlist ({wishlistCount})
+                ❤️ Wishlist (
+                {wishlistCount})
               </Link>
 
               <Link
@@ -117,25 +126,37 @@ export default function Navbar() {
 
         <div className="md:hidden">
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
 
             <Link
               href="/"
-              className="text-2xl font-light tracking-[6px] uppercase text-black"
+              className="shrink-0 text-2xl font-light uppercase tracking-[6px] text-black"
             >
               MAUSAM
             </Link>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 text-sm">
+
+              {/* Account */}
+
+              <AccountMenu />
+
+              {/* Wishlist */}
 
               <Link
                 href="/wishlist"
+                aria-label="Wishlist"
+                className="whitespace-nowrap"
               >
                 ❤️ {wishlistCount}
               </Link>
 
+              {/* Cart */}
+
               <Link
                 href="/cart"
+                aria-label="Shopping cart"
+                className="whitespace-nowrap"
               >
                 🛒 {cartCount}
               </Link>
@@ -144,26 +165,30 @@ export default function Navbar() {
 
           </div>
 
+          {/* Mobile Search */}
+
           <form
             onSubmit={handleSearch}
             className="mt-4"
           >
-
             <input
               type="text"
               placeholder="Search for products..."
               value={query}
               onChange={(e) =>
-                setQuery(e.target.value)
+                setQuery(
+                  e.target.value
+                )
               }
               className="w-full rounded-full border px-4 py-2 text-black outline-none"
             />
-
           </form>
 
         </div>
 
       </div>
+
+      {/* Categories */}
 
       <nav className="flex gap-6 overflow-x-auto whitespace-nowrap border-t px-4 py-3 text-black md:justify-center md:overflow-visible">
 
@@ -171,14 +196,16 @@ export default function Navbar() {
           Home
         </Link>
 
-        {categories.map((category) => (
-          <Link
-            key={category.id}
-            href={`/categories/${category.slug}`}
-          >
-            {category.name}
-          </Link>
-        ))}
+        {categories.map(
+          (category) => (
+            <Link
+              key={category.id}
+              href={`/categories/${category.slug}`}
+            >
+              {category.name}
+            </Link>
+          )
+        )}
 
       </nav>
 
