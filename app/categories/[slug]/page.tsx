@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+
 import ProductCard from "@/components/ProductCard";
 import Footer from "@/components/Footer";
+
 import { supabase } from "@/lib/supabase";
+
 import {
   getStoreProducts,
   type StoreProduct,
@@ -23,23 +26,27 @@ export default function CategoryPage() {
       ? params.slug
       : params.slug?.[0] ?? "";
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
+
   const [category, setCategory] =
     useState<Category | null>(null);
-  const [products, setProducts] = useState<
-    StoreProduct[]
-  >([]);
+
+  const [products, setProducts] =
+    useState<StoreProduct[]>([]);
 
   useEffect(() => {
     async function loadCategory() {
       setLoading(true);
 
-      const { data: categoryData, error } =
-        await supabase
-          .from("categories")
-          .select("id,name")
-          .eq("slug", slug)
-          .single();
+      const {
+        data: categoryData,
+        error,
+      } = await supabase
+        .from("categories")
+        .select("id,name")
+        .eq("slug", slug)
+        .single();
 
       if (error || !categoryData) {
         setCategory(null);
@@ -71,7 +78,7 @@ export default function CategoryPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
+      <main className="flex min-h-screen items-center justify-center">
         <h1 className="text-3xl font-light">
           Loading...
         </h1>
@@ -81,7 +88,7 @@ export default function CategoryPage() {
 
   if (!category) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
+      <main className="flex min-h-screen items-center justify-center">
         <h1 className="text-4xl font-light">
           Category not found
         </h1>
@@ -91,7 +98,9 @@ export default function CategoryPage() {
 
   return (
     <main className="min-h-screen bg-white">
+
       <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
+
         <h1 className="mb-12 text-center text-5xl font-light">
           {category.name}
         </h1>
@@ -102,20 +111,25 @@ export default function CategoryPage() {
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+
             {products.map((product) => (
               <ProductCard
                 key={product.id}
+                id={product.id}
                 name={product.name}
                 price={product.price}
                 image={product.image}
-                slug={product.id}
+                slug={product.slug}
               />
             ))}
+
           </div>
         )}
+
       </section>
 
       <Footer />
+
     </main>
   );
 }
