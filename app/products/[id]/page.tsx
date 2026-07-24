@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+
 import { supabase } from "@/lib/supabase";
 import { addToCart } from "@/lib/cart";
+
 import Footer from "@/components/Footer";
+
 import { useCart } from "@/context/CartContext";
 
 type Product = {
   id: string;
+  slug: string;
   name: string;
   price: number;
   sale_price: number | null;
@@ -17,11 +21,23 @@ type Product = {
 };
 
 export default function ProductPage() {
-  const { id } = useParams();
+  const params = useParams();
+
+  const slug =
+    typeof params.id === "string"
+      ? params.id
+      : params.id?.[0] ?? "";
+
   const { refreshCart } = useCart();
 
   const [product, setProduct] =
     useState<Product | null>(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
 
   const [selectedImage, setSelectedImage] =
     useState("");
@@ -35,46 +51,91 @@ export default function ProductPage() {
   const [copied, setCopied] =
     useState(false);
 
-  const sizes = ["XS", "S", "M", "L", "XL"];
+  const sizes = [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL",
+  ];
 
   useEffect(() => {
-    loadProduct();
-  }, [id]);
+    if (slug) {
+      loadProduct();
+    }
+  }, [slug]);
 
   async function loadProduct() {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .eq("id", id)
-      .single();
+    try {
+      setLoading(true);
+      setError("");
 
-    if (error || !data) return;
+      const {
+        data,
+        error: productError,
+      } = await supabase
+        .from("products")
+        .select(
+          "id, slug, name, price, sale_price, stock"
+        )
+        .eq("slug", slug)
+        .single();
 
-    const { data: images } = await supabase
-      .from("product_images")
-      .select("image_url")
-      .eq("product_id", data.id)
-      .order("sort_order");
+      if (productError || !data) {
+        throw new Error(
+          "Product not found."
+        );
+      }
 
-    const imageList =
-      images?.map(
-        (img) => img.image_url
-      ) ?? [];
+      const {
+        data: images,
+        error: imageError,
+      } = await supabase
+        .from("product_images")
+        .select("image_url")
+        .eq("product_id", data.id)
+        .order("sort_order");
 
-    setProduct({
-      ...data,
-      images: imageList,
-    });
+      if (imageError) {
+        throw imageError;
+      }
 
-    if (imageList.length > 0) {
-      setSelectedImage(imageList[0]);
+      const imageList =
+        images?.map(
+          (image) => image.image_url
+        ) ?? [];
+
+      setProduct({
+        ...data,
+        images: imageList,
+      });
+
+      setSelectedImage(
+        imageList[0] ??
+          "/images/placeholder.png"
+      );
+    } catch (err: any) {
+      console.error(
+        "Unable to load product:",
+        err
+      );
+
+      setProduct(null);
+
+      setError(
+        err.message ||
+          "Unable to load this product."
+      );
+    } finally {
+      setLoading(false);
     }
   }
 
   async function handleShare() {
     if (!product) return;
 
-    const url = window.location.href;
+    const url =
+      window.location.href;
 
     const shareData = {
       title: `${product.name} | MAUSAM`,
@@ -101,7 +162,9 @@ export default function ProductPage() {
         setCopied(false);
       }, 2000);
     } catch (err: any) {
-      if (err?.name !== "AbortError") {
+      if (
+        err?.name !== "AbortError"
+      ) {
         console.error(
           "Unable to share:",
           err
@@ -128,11 +191,33 @@ export default function ProductPage() {
     }
   }
 
-  if (!product) {
+  if (loading) {
     return (
-      <div className="py-40 text-center">
-        Loading...
-      </div>
+      <main className="flex min-h-[70vh] items-center justify-center">
+        <p className="text-gray-500">
+          Loading product...
+        </p>
+      </main>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <main className="flex min-h-[70vh] items-center justify-center px-4">
+
+        <div className="text-center">
+
+          <h1 className="text-3xl font-light">
+            Product not found
+          </h1>
+
+          <p className="mt-3 text-gray-500">
+            {error}
+          </p>
+
+        </div>
+
+      </main>
     );
   }
 
@@ -144,6 +229,7 @@ export default function ProductPage() {
         {/* Images */}
 
         <div>
+
           <img
             src={
               selectedImage ||
@@ -177,6 +263,7 @@ export default function ProductPage() {
             )}
 
           </div>
+
         </div>
 
         {/* Product information */}
@@ -212,7 +299,7 @@ export default function ProductPage() {
             )}
           </p>
 
-          {product.sale_price && (
+          {product.sale_price !== null && (
             <p className="mt-2 text-xl text-red-600">
               Sale ₹
               {product.sale_price.toLocaleString(
@@ -258,6 +345,7 @@ export default function ProductPage() {
               ))}
 
             </div>
+
           </div>
 
           {/* Quantity + Cart */}
@@ -317,9 +405,11 @@ export default function ProductPage() {
           </div>
 
         </div>
+
       </div>
 
       <Footer />
+
     </main>
   );
 }
