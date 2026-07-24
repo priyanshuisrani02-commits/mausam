@@ -12,7 +12,6 @@ import { useCart } from "@/context/CartContext";
 
 type Product = {
   id: string;
-  slug: string;
   name: string;
   price: number;
   sale_price: number | null;
@@ -23,7 +22,7 @@ type Product = {
 export default function ProductPage() {
   const params = useParams();
 
-  const slug =
+  const productId =
     typeof params.id === "string"
       ? params.id
       : params.id?.[0] ?? "";
@@ -60,10 +59,10 @@ export default function ProductPage() {
   ];
 
   useEffect(() => {
-    if (slug) {
+    if (productId) {
       loadProduct();
     }
-  }, [slug]);
+  }, [productId]);
 
   async function loadProduct() {
     try {
@@ -76,9 +75,9 @@ export default function ProductPage() {
       } = await supabase
         .from("products")
         .select(
-          "id, slug, name, price, sale_price, stock"
+          "id, name, price, sale_price, stock"
         )
-        .eq("slug", slug)
+        .eq("id", productId)
         .single();
 
       if (productError || !data) {

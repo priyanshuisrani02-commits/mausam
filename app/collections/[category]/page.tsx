@@ -12,7 +12,6 @@ export default async function CollectionPage({
 }: Props) {
   const { category } = await params;
 
-  // Find category using slug
   const {
     data: categoryData,
     error: categoryError,
@@ -32,7 +31,6 @@ export default async function CollectionPage({
     );
   }
 
-  // Load products in this category
   const {
     data: products,
     error,
@@ -42,7 +40,6 @@ export default async function CollectionPage({
       id,
       name,
       price,
-      slug,
       created_at
     `)
     .eq("category_id", categoryData.id)
@@ -60,7 +57,6 @@ export default async function CollectionPage({
     );
   }
 
-  // Load product images
   const { data: images } = await supabase
     .from("product_images")
     .select("product_id, image_url");
@@ -76,7 +72,6 @@ export default async function CollectionPage({
         id: product.id,
         name: product.name,
         price: product.price,
-        slug: product.slug,
         image:
           firstImage?.image_url ??
           "/images/placeholder.png",
@@ -105,7 +100,7 @@ export default async function CollectionPage({
                 name={product.name}
                 price={product.price}
                 image={product.image}
-                slug={product.slug}
+                slug={product.id}
               />
             )
           )}

@@ -119,7 +119,7 @@ export default function CategoryPage() {
                 name={product.name}
                 price={product.price}
                 image={product.image}
-                slug={product.slug}
+                slug={product.id}
               />
             ))}
 
