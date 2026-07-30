@@ -10,6 +10,7 @@ const menu = [
   { title: "Categories", href: "/admin/categories", icon: "🏷️" },
   { title: "Homepage", href: "/admin/homepage", icon: "🖼️" },
   { title: "Orders", href: "/admin/orders", icon: "📑" },
+  { title: "Reviews", href: "/admin/reviews", icon: "⭐" },
 ];
 
 export default function AdminSidebar() {

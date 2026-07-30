@@ -56,6 +56,39 @@ export default function EditProductPage() {
   const [stock, setStock] =
     useState("");
 
+  const [description, setDescription] =
+    useState("");
+
+  const [material, setMaterial] =
+    useState("");
+
+  const [fit, setFit] =
+    useState("");
+
+  const [pattern, setPattern] =
+    useState("");
+
+  const [neckline, setNeckline] =
+    useState("");
+
+  const [sleeves, setSleeves] =
+    useState("");
+
+  const [occasion, setOccasion] =
+    useState("");
+
+  const [careInstructions, setCareInstructions] =
+    useState("");
+
+  const [availableSizes, setAvailableSizes] =
+    useState<string[]>([]);
+
+  const [sizeFitNote, setSizeFitNote] =
+    useState("");
+
+  const [modelSize, setModelSize] =
+    useState("");
+
   const [categoryId, setCategoryId] =
     useState("");
 
@@ -150,6 +183,31 @@ export default function EditProductPage() {
         : ""
     );
 
+    setDescription(data.description ?? "");
+    setMaterial(data.material ?? "");
+    setFit(data.fit ?? "");
+    setPattern(data.pattern ?? "");
+    setNeckline(data.neckline ?? "");
+    setSleeves(data.sleeves ?? "");
+    setOccasion(data.occasion ?? "");
+    setCareInstructions(
+      data.care_instructions ?? ""
+    );
+
+    setAvailableSizes(
+      Array.isArray(data.available_sizes)
+        ? data.available_sizes
+        : []
+    );
+
+    setSizeFitNote(
+      data.size_fit_note ?? ""
+    );
+
+    setModelSize(
+      data.model_size ?? ""
+    );
+
     setCategoryId(
       data.category_id ?? ""
     );
@@ -180,6 +238,19 @@ export default function EditProductPage() {
     }
 
     setProductImages(data ?? []);
+  }
+
+  const sizeOptions = ["XS", "S", "M", "L", "XL"];
+
+  function toggleSize(size: string) {
+    setAvailableSizes((current) =>
+      current.includes(size)
+        ? current.filter(
+            (currentSize) =>
+              currentSize !== size
+          )
+        : [...current, size]
+    );
   }
 
   async function handleSave() {
@@ -219,6 +290,29 @@ export default function EditProductPage() {
               : null,
             sku: sku.trim(),
             stock: Number(stock || 0),
+            description:
+              description.trim() || null,
+            material:
+              material.trim() || null,
+            fit: fit.trim() || null,
+            pattern:
+              pattern.trim() || null,
+            neckline:
+              neckline.trim() || null,
+            sleeves:
+              sleeves.trim() || null,
+            occasion:
+              occasion.trim() || null,
+            care_instructions:
+              careInstructions.trim() || null,
+            available_sizes:
+              availableSizes.length > 0
+                ? availableSizes
+                : null,
+            size_fit_note:
+              sizeFitNote.trim() || null,
+            model_size:
+              modelSize.trim() || null,
             featured,
             new_arrival: newArrival,
           })
@@ -648,6 +742,228 @@ export default function EditProductPage() {
             </div>
 
           </div>
+        </div>
+
+        {/* PRODUCT INFORMATION */}
+
+        <div className="rounded-[32px] bg-white p-6 shadow md:p-10">
+          <div className="mb-8">
+            <h2 className="text-2xl font-medium">
+              Product Information
+            </h2>
+            <p className="mt-2 text-sm text-gray-500">
+              Add the details customers should know about this product.
+            </p>
+          </div>
+
+          <div className="grid gap-6">
+            <div>
+              <label className="mb-2 block font-medium">
+                Description
+              </label>
+              <textarea
+                rows={5}
+                value={description}
+                onChange={(e) =>
+                  setDescription(e.target.value)
+                }
+                placeholder="Describe the product..."
+                className="w-full rounded-xl border bg-white p-4 text-black"
+              />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <label className="mb-2 block font-medium">
+                  Fabric / Material
+                </label>
+                <input
+                  value={material}
+                  onChange={(e) =>
+                    setMaterial(e.target.value)
+                  }
+                  placeholder="e.g. 100% Cotton"
+                  className="w-full rounded-xl border bg-white p-4 text-black"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block font-medium">
+                  Fit
+                </label>
+                <input
+                  value={fit}
+                  onChange={(e) =>
+                    setFit(e.target.value)
+                  }
+                  placeholder="e.g. Relaxed Fit"
+                  className="w-full rounded-xl border bg-white p-4 text-black"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block font-medium">
+                  Pattern / Design
+                </label>
+                <input
+                  value={pattern}
+                  onChange={(e) =>
+                    setPattern(e.target.value)
+                  }
+                  placeholder="e.g. Floral Print"
+                  className="w-full rounded-xl border bg-white p-4 text-black"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block font-medium">
+                  Neckline
+                </label>
+                <input
+                  value={neckline}
+                  onChange={(e) =>
+                    setNeckline(e.target.value)
+                  }
+                  placeholder="e.g. Round Neck"
+                  className="w-full rounded-xl border bg-white p-4 text-black"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block font-medium">
+                  Sleeves
+                </label>
+                <input
+                  value={sleeves}
+                  onChange={(e) =>
+                    setSleeves(e.target.value)
+                  }
+                  placeholder="e.g. Three-quarter Sleeves"
+                  className="w-full rounded-xl border bg-white p-4 text-black"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block font-medium">
+                  Occasion
+                </label>
+                <input
+                  value={occasion}
+                  onChange={(e) =>
+                    setOccasion(e.target.value)
+                  }
+                  placeholder="e.g. Casual, Festive"
+                  className="w-full rounded-xl border bg-white p-4 text-black"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-2 block font-medium">
+                Care Instructions
+              </label>
+              <textarea
+                rows={4}
+                value={careInstructions}
+                onChange={(e) =>
+                  setCareInstructions(e.target.value)
+                }
+                placeholder="e.g. Gentle machine wash. Wash dark colours separately."
+                className="w-full rounded-xl border bg-white p-4 text-black"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* SIZE & FIT */}
+
+        <div className="rounded-[32px] bg-white p-6 shadow md:p-10">
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-medium">
+              Size & Fit
+            </h2>
+
+            <p className="mt-2 text-sm text-gray-500">
+              Choose the sizes available for this
+              product and update its fit guidance.
+            </p>
+          </div>
+
+          <div className="grid gap-6">
+
+            <div>
+              <label className="mb-3 block font-medium">
+                Available Sizes
+              </label>
+
+              <div className="flex flex-wrap gap-3">
+                {sizeOptions.map((size) => {
+                  const selected =
+                    availableSizes.includes(size);
+
+                  return (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() =>
+                        toggleSize(size)
+                      }
+                      className={`h-12 min-w-12 rounded-full border px-4 transition ${
+                        selected
+                          ? "border-black bg-black text-white"
+                          : "border-gray-300 bg-white text-black hover:border-black"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="mt-3 text-sm text-gray-500">
+                Only selected sizes will be offered
+                to customers on the product page.
+              </p>
+            </div>
+
+            <div>
+              <label className="mb-2 block font-medium">
+                Size & Fit Note
+              </label>
+
+              <textarea
+                rows={4}
+                value={sizeFitNote}
+                onChange={(e) =>
+                  setSizeFitNote(
+                    e.target.value
+                  )
+                }
+                placeholder="e.g. Relaxed fit. We recommend choosing your usual size."
+                className="w-full rounded-xl border bg-white p-4 text-black"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block font-medium">
+                Model Size
+              </label>
+
+              <input
+                value={modelSize}
+                onChange={(e) =>
+                  setModelSize(
+                    e.target.value
+                  )
+                }
+                placeholder="e.g. Model is wearing size S"
+                className="w-full rounded-xl border bg-white p-4 text-black"
+              />
+            </div>
+
+          </div>
+
         </div>
 
         {/* EXISTING IMAGES */}

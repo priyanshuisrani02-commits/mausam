@@ -1,4 +1,4 @@
-"use client";
+   "use client";
 
 import {
   useEffect,
@@ -20,7 +20,26 @@ type Product = {
   price: number;
   sale_price: number | null;
   stock: number;
+  description: string | null;
+  material: string | null;
+  fit: string | null;
+  pattern: string | null;
+  neckline: string | null;
+  sleeves: string | null;
+  occasion: string | null;
+  care_instructions: string | null;
+  available_sizes: string[] | null;
+  size_fit_note: string | null;
+  model_size: string | null;
   images: string[];
+};
+
+type ProductReview = {
+  id: string;
+  customer_name: string;
+  rating: number;
+  review_text: string;
+  created_at: string;
 };
 
 export default function ProductPage() {
@@ -46,13 +65,31 @@ export default function ProductPage() {
     useState("");
 
   const [selectedSize, setSelectedSize] =
-    useState("M");
+    useState("");
 
   const [quantity, setQuantity] =
     useState(1);
 
   const [copied, setCopied] =
     useState(false);
+
+  const [
+    productInfoExpanded,
+    setProductInfoExpanded,
+  ] = useState(false);
+
+  const [reviewName, setReviewName] = useState("");
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewMessage, setReviewMessage] = useState("");
+  const [reviewError, setReviewError] = useState("");
+
+  const [reviews, setReviews] =
+    useState<ProductReview[]>([]);
+
+  const [reviewsLoading, setReviewsLoading] =
+    useState(true);
 
   // Full-screen gallery
   const [galleryOpen, setGalleryOpen] =
@@ -70,17 +107,15 @@ export default function ProductPage() {
   const touchEndX =
     useRef<number | null>(null);
 
-  const sizes = [
-    "XS",
-    "S",
-    "M",
-    "L",
-    "XL",
-  ];
-
   useEffect(() => {
     if (productId) {
       loadProduct();
+    }
+  }, [productId]);
+
+  useEffect(() => {
+    if (productId) {
+      loadReviews();
     }
   }, [productId]);
 
@@ -124,6 +159,37 @@ export default function ProductPage() {
     };
   }, [galleryOpen, galleryIndex, product]);
 
+  async function loadReviews() {
+    try {
+      setReviewsLoading(true);
+
+      const { data, error } = await supabase
+        .from("product_reviews")
+        .select(
+          "id, customer_name, rating, review_text, created_at"
+        )
+        .eq("product_id", productId)
+        .eq("approved", true)
+        .order("created_at", {
+          ascending: false,
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      setReviews(data ?? []);
+    } catch (err) {
+      console.error(
+        "Unable to load reviews:",
+        err
+      );
+      setReviews([]);
+    } finally {
+      setReviewsLoading(false);
+    }
+  }
+
   async function loadProduct() {
     try {
       setLoading(true);
@@ -135,7 +201,7 @@ export default function ProductPage() {
       } = await supabase
         .from("products")
         .select(
-          "id, name, price, sale_price, stock"
+          "id, name, price, sale_price, stock, description, material, fit, pattern, neckline, sleeves, occasion, care_instructions, available_sizes, size_fit_note, model_size"
         )
         .eq("id", productId)
         .single();
@@ -168,6 +234,15 @@ export default function ProductPage() {
         ...data,
         images: imageList,
       });
+
+      const productSizes =
+        Array.isArray(data.available_sizes)
+          ? data.available_sizes
+          : [];
+
+      setSelectedSize(
+        productSizes[0] ?? ""
+      );
 
       setSelectedImage(
         imageList[0] ??
@@ -337,6 +412,15 @@ export default function ProductPage() {
   async function handleAddToCart() {
     if (!product) return;
 
+    if (
+      product.available_sizes &&
+      product.available_sizes.length > 0 &&
+      !selectedSize
+    ) {
+      alert("Please select a size.");
+      return;
+    }
+
     try {
       await addToCart(
         product.id,
@@ -349,6 +433,64 @@ export default function ProductPage() {
       alert("Added to cart!");
     } catch (err: any) {
       alert(err.message);
+    }
+  }
+
+  async function handleSubmitReview(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+    if (!product) return;
+
+    setReviewMessage("");
+    setReviewError("");
+
+    const customerName = reviewName.trim();
+    const customerReview = reviewText.trim();
+
+    if (!customerName) {
+      setReviewError("Please enter your name.");
+      return;
+    }
+
+    if (reviewRating < 1 || reviewRating > 5) {
+      setReviewError("Please choose a star rating.");
+      return;
+    }
+
+    if (!customerReview) {
+      setReviewError("Please write your review.");
+      return;
+    }
+
+    try {
+      setReviewSubmitting(true);
+
+      const { error } = await supabase
+        .from("product_reviews")
+        .insert({
+          product_id: product.id,
+          customer_name: customerName,
+          rating: reviewRating,
+          review_text: customerReview,
+          approved: false,
+        });
+
+      if (error) throw error;
+
+      setReviewName("");
+      setReviewRating(0);
+      setReviewText("");
+      setReviewMessage(
+        "Thank you! Your review has been submitted successfully."
+      );
+    } catch (err: any) {
+      console.error("Unable to submit review:", err);
+      setReviewError(
+        err?.message || "Unable to submit your review right now."
+      );
+    } finally {
+      setReviewSubmitting(false);
     }
   }
 
@@ -382,6 +524,73 @@ export default function ProductPage() {
     product.images.length > 0
       ? product.images
       : ["/images/placeholder.png"];
+
+  const productDetails = [
+    {
+      label: "Fabric / Material",
+      value: product.material,
+    },
+    {
+      label: "Fit",
+      value: product.fit,
+    },
+    {
+      label: "Pattern / Design",
+      value: product.pattern,
+    },
+    {
+      label: "Neckline",
+      value: product.neckline,
+    },
+    {
+      label: "Sleeves",
+      value: product.sleeves,
+    },
+    {
+      label: "Occasion",
+      value: product.occasion,
+    },
+  ].filter(
+    (detail) =>
+      detail.value &&
+      detail.value.trim().length > 0
+  );
+
+  const hasProductInformation =
+    Boolean(product.description?.trim()) ||
+    productDetails.length > 0 ||
+    Boolean(
+      product.care_instructions?.trim()
+    );
+
+  const reviewCount = reviews.length;
+
+  const averageRating =
+    reviewCount > 0
+      ? reviews.reduce(
+          (total, review) =>
+            total + review.rating,
+          0
+        ) / reviewCount
+      : 0;
+
+  const ratingBreakdown = [5, 4, 3, 2, 1].map(
+    (rating) => {
+      const count = reviews.filter(
+        (review) =>
+          review.rating === rating
+      ).length;
+
+      return {
+        rating,
+        count,
+        percentage:
+          reviewCount > 0
+            ? (count / reviewCount) * 100
+            : 0,
+      };
+    }
+  );
 
   return (
     <>
@@ -503,37 +712,59 @@ export default function ProductPage() {
 
             {/* Sizes */}
 
-            <div className="mt-8">
+            {product.available_sizes &&
+              product.available_sizes.length > 0 && (
+                <div className="mt-8">
 
-              <p className="mb-3 text-sm font-medium">
-                Select Size
-              </p>
+                  <p className="mb-3 text-sm font-medium">
+                    Select Size
+                  </p>
 
-              <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3">
 
-                {sizes.map((size) => (
-                  <button
-                    type="button"
-                    key={size}
-                    onClick={() =>
-                      setSelectedSize(
-                        size
+                    {product.available_sizes.map(
+                      (size) => (
+                        <button
+                          type="button"
+                          key={size}
+                          onClick={() =>
+                            setSelectedSize(
+                              size
+                            )
+                          }
+                          className={`h-12 min-w-12 rounded-full border px-3 transition ${
+                            selectedSize ===
+                            size
+                              ? "border-black bg-black text-white"
+                              : "border-gray-300 bg-white text-black hover:border-black"
+                          }`}
+                        >
+                          {size}
+                        </button>
                       )
-                    }
-                    className={`h-12 w-12 rounded-full border transition ${
-                      selectedSize ===
-                      size
-                        ? "bg-black text-white"
-                        : "bg-white"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+                    )}
 
-              </div>
+                  </div>
 
-            </div>
+                  {(product.size_fit_note?.trim() ||
+                    product.model_size?.trim()) && (
+                    <div className="mt-4 space-y-1 text-sm text-gray-600">
+                      {product.size_fit_note?.trim() && (
+                        <p>
+                          {product.size_fit_note}
+                        </p>
+                      )}
+
+                      {product.model_size?.trim() && (
+                        <p>
+                          {product.model_size}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                </div>
+              )}
 
             {/* Quantity + Cart */}
 
@@ -590,6 +821,357 @@ export default function ProductPage() {
               </button>
 
             </div>
+
+
+        {hasProductInformation && (
+          <section className="mt-10 border-t border-black/10 pt-8">
+            <div className="overflow-hidden rounded-[24px] bg-[#f7f4ef] px-5 py-6 md:rounded-[28px] md:px-6 md:py-7">
+
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="text-xl font-light tracking-wide md:text-2xl">
+                  Product Information
+                </h2>
+
+                <span className="text-xl font-light">
+                  {productInfoExpanded
+                    ? "−"
+                    : "+"}
+                </span>
+              </div>
+
+              {product.description?.trim() && (
+                <p
+                  className={`mt-5 whitespace-pre-line leading-7 text-gray-700 ${
+                    productInfoExpanded
+                      ? ""
+                      : "line-clamp-3"
+                  }`}
+                >
+                  {product.description}
+                </p>
+              )}
+
+              <div className="mt-6 grid gap-y-0">
+                {productDetails
+                  .slice(
+                    0,
+                    productInfoExpanded
+                      ? productDetails.length
+                      : 4
+                  )
+                  .map((detail) => (
+                    <div
+                      key={detail.label}
+                      className="grid grid-cols-[minmax(120px,0.8fr)_1.2fr] gap-4 border-b border-black/10 py-4"
+                    >
+                      <p className="text-sm text-gray-500">
+                        {detail.label}
+                      </p>
+
+                      <p className="text-sm font-medium text-black">
+                        {detail.value}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+
+              {productInfoExpanded &&
+                product.care_instructions?.trim() && (
+                  <div className="mt-8 border-t border-black/10 pt-6">
+                    <p className="text-sm text-gray-500">
+                      Care Instructions
+                    </p>
+
+                    <p className="mt-3 whitespace-pre-line leading-7 text-gray-700">
+                      {product.care_instructions}
+                    </p>
+                  </div>
+                )}
+
+              <button
+                type="button"
+                onClick={() =>
+                  setProductInfoExpanded(
+                    (current) => !current
+                  )
+                }
+                className="mt-8 inline-flex items-center gap-2 border-b border-black pb-1 text-sm font-medium transition-opacity hover:opacity-60"
+              >
+                {productInfoExpanded
+                  ? "Show Less"
+                  : "Read More"}
+
+                <span
+                  className={`transition-transform duration-300 ${
+                    productInfoExpanded
+                      ? "rotate-180"
+                      : ""
+                  }`}
+                >
+                  ↓
+                </span>
+              </button>
+
+            </div>
+          </section>
+        )}
+
+        {/* CUSTOMER REVIEWS */}
+
+        <section className="mt-8 border-t border-black/10 pt-8">
+          <div className="rounded-[24px] bg-[#f7f4ef] p-5 md:rounded-[28px] md:p-6">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
+                  Customer Reviews
+                </p>
+
+                <h2 className="mt-2 text-xl font-light tracking-wide md:text-2xl">
+                  What Customers Say
+                </h2>
+              </div>
+
+              {reviewCount > 0 && (
+                <div className="shrink-0 text-right">
+                  <p className="text-3xl font-light">
+                    {averageRating.toFixed(1)}
+                  </p>
+
+                  <p className="mt-1 text-sm tracking-[0.12em]">
+                    {"★".repeat(
+                      Math.round(
+                        averageRating
+                      )
+                    )}
+                    <span className="text-gray-300">
+                      {"★".repeat(
+                        5 -
+                          Math.round(
+                            averageRating
+                          )
+                      )}
+                    </span>
+                  </p>
+
+                  <p className="mt-1 text-xs text-gray-500">
+                    {reviewCount}{" "}
+                    {reviewCount === 1
+                      ? "review"
+                      : "reviews"}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {reviewsLoading ? (
+              <p className="mt-6 text-sm text-gray-500">
+                Loading reviews...
+              </p>
+            ) : reviewCount === 0 ? (
+              <div className="mt-6 rounded-2xl border border-black/10 bg-white px-5 py-6">
+                <p className="text-sm font-medium">
+                  No reviews yet
+                </p>
+
+                <p className="mt-1 text-sm leading-6 text-gray-500">
+                  Be the first to share your experience with this product.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="mt-7 space-y-2">
+                  {ratingBreakdown.map(
+                    (item) => (
+                      <div
+                        key={
+                          item.rating
+                        }
+                        className="grid grid-cols-[38px_1fr_28px] items-center gap-3 text-xs"
+                      >
+                        <span>
+                          {item.rating} ★
+                        </span>
+
+                        <div className="h-1.5 overflow-hidden rounded-full bg-black/10">
+                          <div
+                            className="h-full rounded-full bg-black transition-all duration-500"
+                            style={{
+                              width: `${item.percentage}%`,
+                            }}
+                          />
+                        </div>
+
+                        <span className="text-right text-gray-500">
+                          {item.count}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+
+                <div className="mt-8 divide-y divide-black/10 border-t border-black/10">
+                  {reviews.map(
+                    (review) => (
+                      <article
+                        key={review.id}
+                        className="py-6"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className="font-medium">
+                              {
+                                review.customer_name
+                              }
+                            </p>
+
+                            <p className="mt-1 text-sm tracking-[0.12em]">
+                              {"★".repeat(
+                                review.rating
+                              )}
+                              <span className="text-gray-300">
+                                {"★".repeat(
+                                  5 -
+                                    review.rating
+                                )}
+                              </span>
+                            </p>
+                          </div>
+
+                          <time className="shrink-0 text-xs text-gray-400">
+                            {new Intl.DateTimeFormat(
+                              "en-IN",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            ).format(
+                              new Date(
+                                review.created_at
+                              )
+                            )}
+                          </time>
+                        </div>
+
+                        <p className="mt-4 whitespace-pre-line text-sm leading-7 text-gray-700">
+                          {
+                            review.review_text
+                          }
+                        </p>
+                      </article>
+                    )
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* WRITE A REVIEW */}
+
+        <section className="mt-8 border-t border-black/10 pt-8">
+          <div className="rounded-[24px] border border-black/10 bg-white p-5 md:rounded-[28px] md:p-6">
+            <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
+              Customer Reviews
+            </p>
+
+            <h2 className="mt-2 text-xl font-light tracking-wide md:text-2xl">
+              Write a Review
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-gray-500">
+              Share your experience with this product.
+            </p>
+
+            <form onSubmit={handleSubmitReview} className="mt-6 space-y-5">
+              <div>
+                <label className="mb-2 block text-sm font-medium">
+                  Your Rating
+                </label>
+
+                <div className="flex w-fit items-center gap-1" aria-label="Choose a rating from 1 to 5 stars">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      className={`p-1 text-3xl leading-none transition duration-200 hover:-translate-y-0.5 ${
+                        star <= reviewRating ? "text-black" : "text-gray-300"
+                      }`}
+                      aria-label={`${star} ${star === 1 ? "star" : "stars"}`}
+                      aria-pressed={reviewRating === star}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+
+                {reviewRating > 0 && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    {reviewRating} out of 5
+                  </p>
+                )}
+              </div>
+ 
+              <div>
+                <label htmlFor="review-name" className="mb-2 block text-sm font-medium">
+                  Your Name
+                </label>
+
+                <input
+                  id="review-name"
+                  type="text"
+                  value={reviewName}
+                  onChange={(event) => setReviewName(event.target.value)}
+                  maxLength={80}
+                  placeholder="Enter your name"
+                  className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-black outline-none transition focus:border-black"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="review-text" className="mb-2 block text-sm font-medium">
+                  Your Review
+                </label>
+
+                <textarea
+                  id="review-text"
+                  rows={5}
+                  value={reviewText}
+                  onChange={(event) => setReviewText(event.target.value)}
+                  maxLength={1500}
+                  placeholder="What did you think of this product?"
+                  className="w-full resize-none rounded-2xl border border-gray-300 bg-white px-4 py-3 text-black outline-none transition focus:border-black"
+                />
+
+                <p className="mt-2 text-right text-xs text-gray-400">
+                  {reviewText.length}/1500
+                </p>
+              </div>
+
+              {reviewError && (
+                <div role="alert" className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {reviewError}
+                </div>
+              )}
+
+              {reviewMessage && (
+                <div role="status" className="rounded-2xl bg-green-50 px-4 py-3 text-sm text-green-800">
+                  {reviewMessage}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={reviewSubmitting}
+                className="w-full rounded-full bg-black px-6 py-4 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {reviewSubmitting ? "Submitting..." : "Submit Review"}
+              </button>
+            </form>
+          </div>
+        </section>
+
 
           </div>
 
@@ -758,4 +1340,4 @@ export default function ProductPage() {
       )}
     </>
   );
-}
+} 
