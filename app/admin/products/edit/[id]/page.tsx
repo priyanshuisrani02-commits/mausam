@@ -55,6 +55,14 @@ export default function EditProductPage() {
 
   const [stock, setStock] =
     useState("");
+const [trackInventory, setTrackInventory] =
+  useState(true);
+
+const [stockQuantity, setStockQuantity] =
+  useState("0");
+
+const [lowStockThreshold, setLowStockThreshold] =
+  useState("5");
 
   const [description, setDescription] =
     useState("");
@@ -183,6 +191,24 @@ export default function EditProductPage() {
         : ""
     );
 
+    setStockQuantity(
+  data.stock_quantity !== null &&
+  data.stock_quantity !== undefined
+    ? String(data.stock_quantity)
+    : "0"
+);
+
+setLowStockThreshold(
+  data.low_stock_threshold !== null &&
+  data.low_stock_threshold !== undefined
+    ? String(data.low_stock_threshold)
+    : "5"
+);
+
+setTrackInventory(
+  data.track_inventory !== false
+);
+
     setDescription(data.description ?? "");
     setMaterial(data.material ?? "");
     setFit(data.fit ?? "");
@@ -289,7 +315,15 @@ export default function EditProductPage() {
               ? Number(salePrice)
               : null,
             sku: sku.trim(),
-            stock: Number(stock || 0),
+            stock: Number(stockQuantity || 0),
+
+stock_quantity: Number(stockQuantity || 0),
+
+low_stock_threshold: Number(
+  lowStockThreshold || 5
+),
+
+track_inventory: trackInventory,
             description:
               description.trim() || null,
             material:
@@ -691,20 +725,68 @@ export default function EditProductPage() {
               </div>
 
               <div>
-                <label className="mb-2 block font-medium">
-                  Stock
-                </label>
+               <label className="mb-2 block font-medium">
+  Stock Quantity
+</label>
 
-                <input
-                  type="number"
-                  value={stock}
-                  onChange={(e) =>
-                    setStock(
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-xl border p-4 text-black"
-                />
+<input
+  type="number"
+  value={stockQuantity}
+  disabled={!trackInventory}
+  onChange={(e) =>
+    setStockQuantity(e.target.value)
+  }
+  className="w-full rounded-xl border p-4 text-black disabled:bg-gray-100"
+/>
+
+<div className="rounded-2xl border border-gray-200 p-6">
+
+  <h3 className="text-xl font-medium">
+    Inventory
+  </h3>
+
+  <p className="mt-2 text-sm text-gray-500">
+    Configure inventory tracking.
+  </p>
+
+  <label className="mt-6 flex items-center gap-3">
+
+    <input
+      type="checkbox"
+      checked={trackInventory}
+      onChange={(e) =>
+        setTrackInventory(
+          e.target.checked
+        )
+      }
+    />
+
+    Track Inventory
+
+  </label>
+
+  <div className="mt-6">
+
+    <label className="mb-2 block font-medium">
+      Low Stock Threshold
+    </label>
+
+    <input
+      type="number"
+      value={lowStockThreshold}
+      disabled={!trackInventory}
+      onChange={(e) =>
+        setLowStockThreshold(
+          e.target.value
+        )
+      }
+      className="w-full rounded-xl border p-4 text-black disabled:bg-gray-100"
+    />
+
+  </div>
+
+</div>
+
               </div>
 
             </div>

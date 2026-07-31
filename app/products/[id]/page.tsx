@@ -19,9 +19,14 @@ type Product = {
   name: string;
   price: number;
   sale_price: number | null;
+
   stock: number;
+  stock_quantity: number;
+  low_stock_threshold: number;
+  track_inventory: boolean;
+
   description: string | null;
-  material: string | null;
+  material: string |null;
   fit: string | null;
   pattern: string | null;
   neckline: string | null;
@@ -201,8 +206,28 @@ export default function ProductPage() {
       } = await supabase
         .from("products")
         .select(
-          "id, name, price, sale_price, stock, description, material, fit, pattern, neckline, sleeves, occasion, care_instructions, available_sizes, size_fit_note, model_size"
-        )
+`
+id,
+name,
+price,
+sale_price,
+stock,
+stock_quantity,
+low_stock_threshold,
+track_inventory,
+description,
+material,
+fit,
+pattern,
+neckline,
+sleeves,
+occasion,
+care_instructions,
+available_sizes,
+size_fit_note,
+model_size
+`
+)
         .eq("id", productId)
         .single();
 
@@ -525,6 +550,24 @@ export default function ProductPage() {
       ? product.images
       : ["/images/placeholder.png"];
 
+const inventoryTracked =
+  product.track_inventory;
+
+const availableStock =
+  inventoryTracked
+    ? product.stock_quantity
+    : product.stock;
+
+const lowStock =
+  inventoryTracked &&
+  availableStock <= product.low_stock_threshold &&
+  availableStock > 0;
+
+const outOfStock =
+  inventoryTracked
+    ? availableStock <= 0
+    : product.stock <= 0;
+
   const productDetails = [
     {
       label: "Fabric / Material",
@@ -704,12 +747,30 @@ export default function ProductPage() {
               </p>
             )}
 
-            <p className="mt-6 text-gray-600">
-              {product.stock > 0
-                ? `In Stock (${product.stock})`
-                : "Out of Stock"}
-            </p>
+          <p className="mt-6 text-gray-600">
+  {!inventoryTracked && (
+    <>In Stock</>
+  )}
 
+  {inventoryTracked &&
+    !outOfStock &&
+    !lowStock && (
+      <>In Stock ({availableStock})</>
+    )}
+
+  {inventoryTracked &&
+    lowStock && (
+      <span className="text-yellow-600">
+        Only {availableStock} left
+      </span>
+    )}
+
+  {outOfStock && (
+    <span className="text-red-600">
+      Out of Stock
+    </span>
+  )}
+</p>
             {/* Sizes */}
 
             {product.available_sizes &&
@@ -793,11 +854,14 @@ export default function ProductPage() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setQuantity(
-                      (q) => q + 1
-                    )
-                  }
+                 onClick={() =>
+  setQuantity((q) =>
+    Math.min(
+      availableStock,
+      q + 1
+    )
+  )
+}
                   className="px-5 py-3 text-xl"
                 >
                   +
@@ -810,14 +874,12 @@ export default function ProductPage() {
                 onClick={
                   handleAddToCart
                 }
-                disabled={
-                  product.stock <= 0
-                }
+               disabled={outOfStock}
                 className="w-full rounded-full bg-black px-10 py-4 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40 md:w-auto"
               >
-                {product.stock > 0
-                  ? "Add to Cart"
-                  : "Out of Stock"}
+             {outOfStock
+  ? "Out of Stock"
+  : "Add to Cart"}
               </button>
 
             </div>
