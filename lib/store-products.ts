@@ -4,12 +4,23 @@ export type StoreProduct = {
   id: string;
   slug: string;
   name: string;
+
   price: number;
   sale_price: number | null;
+
   stock: number;
+  stock_quantity: number;
+  track_inventory: boolean;
+
   featured: boolean;
   new_arrival: boolean;
+
   category_id: string;
+
+  available_sizes: string[] | null;
+
+  created_at: string;
+
   image: string;
 };
 
@@ -23,11 +34,17 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
       price,
       sale_price,
       stock,
+      stock_quantity,
+      track_inventory,
       featured,
       new_arrival,
-      category_id
+      category_id,
+      available_sizes,
+      created_at
     `)
-    .order("created_at", { ascending: false });
+    .order("created_at", {
+      ascending: false,
+    });
 
   if (error || !products) {
     console.error(error);
