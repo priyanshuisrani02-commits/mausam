@@ -4,23 +4,16 @@ export type StoreProduct = {
   id: string;
   slug: string;
   name: string;
-
   price: number;
   sale_price: number | null;
-
   stock: number;
   stock_quantity: number;
   track_inventory: boolean;
-
   featured: boolean;
   new_arrival: boolean;
-
-  category_id: string;
-
+  category_id: string | null;
   available_sizes: string[] | null;
-
   created_at: string;
-
   image: string;
 };
 
@@ -42,18 +35,21 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
       available_sizes,
       created_at
     `)
-    .order("created_at", {
-      ascending: false,
-    });
+    .order("created_at", { ascending: false });
 
   if (error || !products) {
-    console.error(error);
+    console.error("Failed to load products:", error);
     return [];
   }
 
-  const { data: images } = await supabase
+  const { data: images, error: imageError } = await supabase
     .from("product_images")
-    .select("product_id, image_url");
+    .select("product_id, image_url")
+    .order("sort_order", { ascending: true });
+
+  if (imageError) {
+    console.error("Failed to load product images:", imageError);
+  }
 
   return products.map((product) => {
     const firstImage = images?.find(
@@ -62,9 +58,7 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
 
     return {
       ...product,
-      image:
-        firstImage?.image_url ??
-        "/images/placeholder.png",
+      image: firstImage?.image_url ?? "/images/products/product1.png",
     };
   });
 }
