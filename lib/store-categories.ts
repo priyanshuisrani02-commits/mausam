@@ -9,27 +9,26 @@ export type StoreCategory = {
   sort_order: number;
 };
 
-export async function getStoreCategories(): Promise<
-  StoreCategory[]
-> {
+export async function getStoreCategories(): Promise<StoreCategory[]> {
   const { data, error } = await supabase
     .from("categories")
     .select(`
       id,
       name,
       slug,
-      image,
+      image_url,
       show_on_homepage,
       sort_order
     `)
-    .order("sort_order", {
-      ascending: true,
-    });
+    .order("sort_order", { ascending: true });
 
   if (error || !data) {
-    console.error(error);
+    console.error("Failed to load categories:", error);
     return [];
   }
 
-  return data;
+  return data.map((category) => ({
+    ...category,
+    image: category.image_url ?? null,
+  }));
 }
