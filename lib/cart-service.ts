@@ -24,21 +24,25 @@ export async function getCartItems() {
       products (
         id,
         name,
-        price
+        price,
+        sale_price,
+        stock_quantity,
+        track_inventory
       )
     `)
     .eq("user_id", userId);
 
   if (error) throw error;
 
-  const { data: images } = await supabase
+  const { data: images, error: imageError } = await supabase
     .from("product_images")
-    .select("product_id,image_url");
+    .select("product_id,image_url")
+    .order("sort_order", { ascending: true });
+
+  if (imageError) console.error("Failed to load cart images:", imageError);
 
   return (data ?? []).map((item: any) => {
-    const product = Array.isArray(item.products)
-      ? item.products[0]
-      : item.products;
+    const product = Array.isArray(item.products) ? item.products[0] : item.products;
 
     return {
       id: item.id,
@@ -47,10 +51,8 @@ export async function getCartItems() {
       product: {
         ...product,
         image:
-          images?.find(
-            (img) => img.product_id === product.id
-          )?.image_url ??
-          "/images/placeholder.png",
+          images?.find((img) => img.product_id === product.id)?.image_url ??
+          "/images/products/product1.png",
       },
     };
   });
