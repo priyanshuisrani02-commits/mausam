@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 
 type Product = {
   id: string;
@@ -18,6 +18,8 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   async function loadProducts() {
+    const supabase = createClient();
+
     const { data, error } = await supabase
       .from("products")
       .select("*")
@@ -34,17 +36,31 @@ export default function ProductsPage() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this product?")) return;
 
-    const { error } = await supabase
+    const supabase = createClient();
+
+    const { data, error } = await supabase
       .from("products")
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .select("id");
 
     if (error) {
       alert(error.message);
       return;
     }
 
-    loadProducts();
+    if (!data || data.length === 0) {
+      alert(
+        "The product was not deleted. Please make sure you are signed in with the MAUSAM admin account."
+      );
+      return;
+    }
+
+    setProducts((current) =>
+      current.filter((product) => product.id !== id)
+    );
+
+    await loadProducts();
   }
 
   useEffect(() => {
