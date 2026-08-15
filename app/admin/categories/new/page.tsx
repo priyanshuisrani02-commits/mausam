@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { uploadCategoryImage } from "@/lib/upload-category-image";
 
 function slugify(text: string) {
@@ -39,6 +39,7 @@ export default function NewCategoryPage() {
     try {
       setSaving(true);
 
+      const supabase = createClient();
       let imageUrl = "";
 
       if (image) {
