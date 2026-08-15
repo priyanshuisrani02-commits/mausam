@@ -1,8 +1,7 @@
-import { supabase } from "./supabase";
+import { createClient } from "./supabase/client";
 
-export async function uploadCategoryImage(
-  image: File
-) {
+export async function uploadCategoryImage(image: File) {
+  const supabase = createClient();
   const fileName = `${Date.now()}-${image.name}`;
 
   const { error } = await supabase.storage
