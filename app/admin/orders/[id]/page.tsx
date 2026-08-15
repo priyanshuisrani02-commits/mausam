@@ -357,7 +357,7 @@ export default function OrderDetailsPage() {
                       <td className="p-4">
                         {item.products
                           ?.name ??
-                          "Product"}
+                          "Product no longer available"}
                       </td>
 
                       <td className="p-4">
@@ -405,7 +405,7 @@ export default function OrderDetailsPage() {
                       <p className="font-medium">
                         {item.products
                           ?.name ??
-                          "Product"}
+                          "Product no longer available"}
                       </p>
 
                       <p className="mt-2 text-sm text-gray-500">
