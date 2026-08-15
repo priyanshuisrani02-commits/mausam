@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 
 type Category = {
   id: string;
@@ -26,6 +26,8 @@ export default function CategoriesPage() {
   async function loadCategories() {
     setLoading(true);
 
+    const supabase = createClient();
+
     const { data, error } = await supabase
       .from("categories")
       .select("*")
@@ -46,17 +48,31 @@ export default function CategoriesPage() {
 
     if (!confirmed) return;
 
-    const { error } = await supabase
+    const supabase = createClient();
+
+    const { data, error } = await supabase
       .from("categories")
       .delete()
-      .eq("id", category.id);
+      .eq("id", category.id)
+      .select("id");
 
     if (error) {
       alert(error.message);
       return;
     }
 
-    loadCategories();
+    if (!data || data.length === 0) {
+      alert(
+        "The category was not deleted. Please make sure you are signed in with the MAUSAM admin account."
+      );
+      return;
+    }
+
+    setCategories((current) =>
+      current.filter((item) => item.id !== category.id)
+    );
+
+    await loadCategories();
   }
 
   return (
