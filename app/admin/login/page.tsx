@@ -20,13 +20,26 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError("");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error: signInError } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      setError(error.message);
+    if (signInError) {
+      setError(signInError.message);
+      setLoading(false);
+      return;
+    }
+
+    const { data: adminCheck, error: adminCheckError } =
+      await supabase.rpc("is_mausam_admin");
+
+    if (adminCheckError || adminCheck !== true) {
+      await supabase.auth.signOut();
+      setError(
+        "This account is not authorized to access the MAUSAM admin panel."
+      );
       setLoading(false);
       return;
     }
