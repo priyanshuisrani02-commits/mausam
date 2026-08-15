@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { uploadCategoryImage } from "@/lib/upload-category-image";
 
 type Category = {
@@ -51,6 +51,8 @@ export default function EditCategoryPage() {
   }, []);
 
   async function loadCategory() {
+    const supabase = createClient();
+
     const { data, error } = await supabase
       .from("categories")
       .select("*")
@@ -81,6 +83,7 @@ export default function EditCategoryPage() {
     try {
       setSaving(true);
 
+      const supabase = createClient();
       let imageUrl = preview;
 
       if (image) {
