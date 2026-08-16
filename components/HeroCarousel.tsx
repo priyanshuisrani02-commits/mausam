@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import type { TouchEvent } from "react";
 
 import {
   getHeroSlides,
@@ -73,13 +74,13 @@ export default function HeroCarousel() {
     setCurrent((index + slides.length) % slides.length);
   }
 
-  function handleTouchStart(event: React.TouchEvent<HTMLElement>) {
+  function handleTouchStart(event: TouchEvent<HTMLElement>) {
     const touch = event.changedTouches[0];
     touchStartX.current = touch.clientX;
     touchStartY.current = touch.clientY;
   }
 
-  function handleTouchEnd(event: React.TouchEvent<HTMLElement>) {
+  function handleTouchEnd(event: TouchEvent<HTMLElement>) {
     if (touchStartX.current === null || touchStartY.current === null) return;
 
     const touch = event.changedTouches[0];
