@@ -25,7 +25,6 @@ export default function ProductCard({
   price,
   salePrice = null,
   image,
-  slug,
   newArrival = false,
   availableSizes = null,
 }: ProductCardProps) {
@@ -35,9 +34,9 @@ export default function ProductCard({
   const wishlisted = isWishlisted(id);
   const displayPrice = salePrice ?? price;
 
-  async function handleWishlist(e: MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    e.stopPropagation();
+  async function handleWishlist(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
 
     if (!user) {
       router.push("/login");
@@ -46,14 +45,14 @@ export default function ProductCard({
 
     try {
       await toggle(id);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Unable to update wishlist.");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Unable to update wishlist.");
     }
   }
 
-  async function handleAddToCart(e: MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    e.stopPropagation();
+  async function handleAddToCart(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
 
     if (!user) {
       router.push("/login");
@@ -69,25 +68,26 @@ export default function ProductCard({
           ? `Added to cart in ${selectedSize}. You can change the size from the product page.`
           : "Added to cart."
       );
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Unable to add to cart.");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Unable to add to cart.");
     }
   }
 
   return (
-    <Link href={`/products/${id}`}>
+    <Link href={`/products/${id}`} className="block">
       <div className="group cursor-pointer">
-        <div className="relative overflow-hidden rounded-3xl">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl">
           <img
             src={image || "/images/products/product1.png"}
             alt={name}
-            className="h-[450px] w-full object-cover transition duration-500 group-hover:scale-110"
+            loading="lazy"
+            className="aspect-[4/5] h-auto w-full object-cover transition duration-500 md:aspect-auto md:h-[450px] md:group-hover:scale-110"
           />
 
-          <div className="absolute inset-0 bg-black/0 transition duration-500 group-hover:bg-black/20" />
+          <div className="absolute inset-0 bg-black/0 transition duration-500 md:group-hover:bg-black/20" />
 
           {newArrival && (
-            <div className="absolute left-4 top-4 rounded-full bg-white px-4 py-1 text-sm font-medium">
+            <div className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-[10px] font-medium tracking-[2px] sm:left-4 sm:top-4 sm:px-4 sm:text-sm">
               NEW
             </div>
           )}
@@ -97,8 +97,8 @@ export default function ProductCard({
             disabled={loading}
             onClick={handleWishlist}
             aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-            className={`absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-lg transition duration-300 ${
-              wishlisted ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+            className={`absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-lg transition duration-300 sm:right-4 sm:top-4 ${
+              wishlisted ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"
             }`}
           >
             {wishlisted ? "♥" : "♡"}
@@ -107,20 +107,22 @@ export default function ProductCard({
           <button
             type="button"
             onClick={handleAddToCart}
-            className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2 translate-y-6 rounded-full bg-white px-6 py-3 text-black opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+            className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-white px-4 py-2.5 text-xs font-medium text-black shadow-md transition-all duration-300 sm:bottom-6 sm:px-6 sm:py-3 sm:text-sm md:translate-y-6 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
           >
             Add to Cart
           </button>
         </div>
 
-        <h3 className="mt-5 text-xl font-medium">{name}</h3>
+        <h3 className="mt-3 line-clamp-2 text-base font-medium sm:mt-5 sm:text-xl">
+          {name}
+        </h3>
 
-        <p className="mt-2 text-gray-500">
+        <p className="mt-1.5 text-sm text-gray-500 sm:mt-2 sm:text-base">
           <span className={salePrice != null ? "font-medium text-black" : ""}>
             ₹{displayPrice.toLocaleString("en-IN")}
           </span>
           {salePrice != null && (
-            <span className="ml-2 text-sm text-gray-400 line-through">
+            <span className="ml-2 text-xs text-gray-400 line-through sm:text-sm">
               ₹{price.toLocaleString("en-IN")}
             </span>
           )}
