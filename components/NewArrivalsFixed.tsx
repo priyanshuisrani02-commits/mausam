@@ -10,19 +10,28 @@ export default function NewArrivalsFixed() {
 
   useEffect(() => {
     async function loadProducts() {
-      const data = await getStoreProducts();
-      setProducts(data.filter((product) => product.new_arrival));
+      try {
+        const data = await getStoreProducts();
+        setProducts(data.filter((product) => product.new_arrival));
+      } catch (error) {
+        console.error(error);
+      }
     }
+
     loadProducts();
   }, []);
 
   return (
-    <section className="bg-white py-24">
-      <h2 className="mb-16 text-center text-5xl font-light">NEW ARRIVALS</h2>
+    <section className="bg-white py-12 sm:py-16 md:py-24">
+      <h2 className="mb-8 px-4 text-center text-2xl font-light tracking-[2px] sm:mb-12 sm:text-3xl md:mb-16 md:text-5xl">
+        NEW ARRIVALS
+      </h2>
 
-      <div className="mx-auto hidden max-w-7xl grid-cols-4 gap-8 px-8 md:grid">
+      <div className="mx-auto hidden max-w-7xl grid-cols-4 gap-6 px-6 md:grid md:gap-8 md:px-8">
         {products.length === 0 ? (
-          <p className="col-span-4 text-center text-gray-500">No new arrivals found.</p>
+          <p className="col-span-4 py-10 text-center text-gray-500">
+            No new arrivals found.
+          </p>
         ) : (
           products.slice(0, 4).map((product) => (
             <ProductCard
@@ -40,22 +49,42 @@ export default function NewArrivalsFixed() {
         )}
       </div>
 
-      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 md:hidden" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:hidden">
         {products.length === 0 ? (
-          <p className="w-full py-10 text-center text-gray-500">No new arrivals found.</p>
+          <p className="w-full py-10 text-center text-gray-500">
+            No new arrivals found.
+          </p>
         ) : (
           products.map((product) => (
-            <Link key={product.id} href={`/products/${product.id}`} className="w-[84vw] shrink-0 snap-center">
-              <div className="overflow-hidden rounded-xl bg-white">
-                <div className="relative">
-                  <img src={product.image || "/images/products/product1.png"} alt={product.name} className="h-[420px] w-full object-cover" />
-                  <span className="absolute left-3 top-3 rounded-full bg-black px-3 py-1 text-xs font-medium tracking-widest text-white">NEW</span>
+            <Link
+              key={product.id}
+              href={`/products/${product.id}`}
+              className="w-[84vw] max-w-[360px] shrink-0 snap-center"
+            >
+              <div className="overflow-hidden rounded-2xl bg-white">
+                <div className="relative aspect-[4/5] overflow-hidden">
+                  <img
+                    src={product.image || "/images/products/product1.png"}
+                    alt={product.name}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                  <span className="absolute left-3 top-3 rounded-full bg-black px-3 py-1 text-[10px] font-medium tracking-[2px] text-white sm:text-xs">
+                    NEW
+                  </span>
                 </div>
-                <div className="pt-4">
-                  <h3 className="text-lg font-light text-black">{product.name}</h3>
-                  <p className="mt-2 text-base text-gray-700">
+
+                <div className="px-1 pt-3 pb-2 sm:pt-4">
+                  <h3 className="line-clamp-2 text-base font-light text-black sm:text-lg">
+                    {product.name}
+                  </h3>
+                  <p className="mt-1.5 text-sm text-gray-700 sm:mt-2 sm:text-base">
                     ₹{(product.sale_price ?? product.price).toLocaleString("en-IN")}
-                    {product.sale_price != null && <span className="ml-2 text-sm text-gray-400 line-through">₹{product.price.toLocaleString("en-IN")}</span>}
+                    {product.sale_price != null && (
+                      <span className="ml-2 text-xs text-gray-400 line-through sm:text-sm">
+                        ₹{product.price.toLocaleString("en-IN")}
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
