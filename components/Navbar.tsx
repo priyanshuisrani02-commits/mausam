@@ -15,10 +15,7 @@ import {
 
 export default function Navbar() {
   const [query, setQuery] = useState("");
-
-  const [categories, setCategories] =
-    useState<AdminCategory[]>([]);
-
+  const [categories, setCategories] = useState<AdminCategory[]>([]);
   const router = useRouter();
 
   const { cart } = useCart();
@@ -27,188 +24,135 @@ export default function Navbar() {
   useEffect(() => {
     async function loadCategories() {
       try {
-        const data =
-          await getCategories();
-
+        const data = await getCategories();
         setCategories(data);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(error);
       }
     }
 
     loadCategories();
   }, []);
 
-  function handleSearch(
-    e: React.FormEvent
-  ) {
-    e.preventDefault();
+  function handleSearch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
     if (query.trim()) {
-      router.push(
-        `/search?q=${encodeURIComponent(
-          query
-        )}`
-      );
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   }
 
   const cartCount = cart.reduce(
-    (total: number, item: any) =>
-      total + item.quantity,
+    (total: number, item: { quantity: number }) => total + item.quantity,
     0
   );
 
-  const wishlistCount =
-    wishlist.length;
+  const wishlistCount = wishlist.length;
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
-
-      <div className="mx-auto max-w-7xl px-4 py-4 md:px-8">
-
+      <div className="mx-auto max-w-7xl px-3 py-3 sm:px-4 sm:py-4 md:px-8">
         {/* Desktop */}
-
         <div className="hidden md:block">
-
-          <div className="mb-4 flex items-center justify-between">
-
+          <div className="mb-4 flex items-center justify-between gap-6">
             <Link
               href="/"
-              className="text-3xl font-light uppercase tracking-[8px] text-black md:text-5xl md:tracking-[18px]"
+              className="shrink-0 text-3xl font-light uppercase tracking-[8px] text-black lg:text-5xl lg:tracking-[18px]"
             >
               MAUSAM
             </Link>
 
-            <form
-              onSubmit={handleSearch}
-              className="w-auto"
-            >
+            <form onSubmit={handleSearch} className="w-full max-w-md">
               <input
-                type="text"
+                type="search"
                 placeholder="Search for products..."
+                aria-label="Search for products"
                 value={query}
-                onChange={(e) =>
-                  setQuery(
-                    e.target.value
-                  )
-                }
-                className="w-80 rounded-full border px-4 py-2 text-black outline-none lg:w-96"
+                onChange={(event) => setQuery(event.target.value)}
+                className="w-full rounded-full border px-4 py-2 text-black outline-none transition focus:border-black"
               />
             </form>
 
-            <div className="flex items-center gap-6">
-
+            <div className="flex shrink-0 items-center gap-6">
               <AccountMenu />
 
-              <Link
-                href="/wishlist"
-                className="hover:underline"
-              >
-                ❤️ Wishlist (
-                {wishlistCount})
+              <Link href="/wishlist" className="whitespace-nowrap hover:underline">
+                ❤️ Wishlist ({wishlistCount})
               </Link>
 
-              <Link
-                href="/cart"
-                className="hover:underline"
-              >
+              <Link href="/cart" className="whitespace-nowrap hover:underline">
                 Cart ({cartCount})
               </Link>
-
             </div>
-
           </div>
-
         </div>
 
         {/* Mobile */}
-
         <div className="md:hidden">
-
-          <div className="flex items-center justify-between gap-3">
-
+          <div className="flex min-w-0 items-center justify-between gap-2">
             <Link
               href="/"
-              className="shrink-0 text-2xl font-light uppercase tracking-[6px] text-black"
+              className="min-w-0 shrink text-xl font-light uppercase tracking-[4px] text-black sm:text-2xl sm:tracking-[6px]"
             >
               MAUSAM
             </Link>
 
-            <div className="flex items-center gap-3 text-sm">
-
-              {/* Account */}
-
-              <AccountMenu />
-
-              {/* Wishlist */}
+            <div className="flex shrink-0 items-center gap-2 text-xs sm:gap-3 sm:text-sm">
+              <div className="max-w-[84px] truncate sm:max-w-[120px]">
+                <AccountMenu />
+              </div>
 
               <Link
                 href="/wishlist"
-                aria-label="Wishlist"
-                className="whitespace-nowrap"
+                aria-label={`Wishlist, ${wishlistCount} items`}
+                className="flex min-h-9 min-w-9 items-center justify-center rounded-full px-1"
               >
-                ❤️ {wishlistCount}
+                <span aria-hidden="true">♡</span>
+                <span className="ml-0.5">{wishlistCount}</span>
               </Link>
-
-              {/* Cart */}
 
               <Link
                 href="/cart"
-                aria-label="Shopping cart"
-                className="whitespace-nowrap"
+                aria-label={`Shopping cart, ${cartCount} items`}
+                className="flex min-h-9 min-w-9 items-center justify-center rounded-full px-1"
               >
-                🛒 {cartCount}
+                <span aria-hidden="true">🛒</span>
+                <span className="ml-0.5">{cartCount}</span>
               </Link>
-
             </div>
-
           </div>
 
-          {/* Mobile Search */}
-
-          <form
-            onSubmit={handleSearch}
-            className="mt-4"
-          >
+          <form onSubmit={handleSearch} className="mt-3 sm:mt-4">
             <input
-              type="text"
+              type="search"
               placeholder="Search for products..."
+              aria-label="Search for products"
               value={query}
-              onChange={(e) =>
-                setQuery(
-                  e.target.value
-                )
-              }
-              className="w-full rounded-full border px-4 py-2 text-black outline-none"
+              onChange={(event) => setQuery(event.target.value)}
+              className="h-10 w-full rounded-full border px-4 text-sm text-black outline-none transition focus:border-black sm:h-11"
             />
           </form>
-
         </div>
-
       </div>
 
-      {/* Categories */}
-
-      <nav className="flex gap-6 overflow-x-auto whitespace-nowrap border-t px-4 py-3 text-black md:justify-center md:overflow-visible">
-
-        <Link href="/">
+      <nav
+        aria-label="Product categories"
+        className="flex gap-5 overflow-x-auto border-t px-3 py-2.5 text-sm text-black [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-6 sm:px-4 sm:py-3 md:justify-center md:overflow-visible"
+      >
+        <Link href="/" className="shrink-0 py-1">
           Home
         </Link>
 
-        {categories.map(
-          (category) => (
-            <Link
-              key={category.id}
-              href={`/categories/${category.slug}`}
-            >
-              {category.name}
-            </Link>
-          )
-        )}
-
+        {categories.map((category) => (
+          <Link
+            key={category.id}
+            href={`/categories/${category.slug}`}
+            className="shrink-0 py-1"
+          >
+            {category.name}
+          </Link>
+        ))}
       </nav>
-
     </header>
   );
 }
