@@ -21,29 +21,34 @@ export async function getHeroSlides() {
   return data ?? [];
 }
 
+export async function getHeroSlide(id: string) {
+  const { data, error } = await supabase
+    .from("hero_slides")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return data as HeroSlide | null;
+}
+
 export async function saveHeroSlide(data: {
   imageUrl: string;
   link: string;
   sortOrder: number;
   active: boolean;
 }) {
-  console.log("Saving hero slide:", data);
-
-  const { data: inserted, error } = await supabase
-    .from("hero_slides")
-    .insert({
-      image_url: data.imageUrl,
-      link: data.link,
-      sort_order: data.sortOrder,
-      active: data.active,
-    })
-    .select();
-
-  console.log("Inserted:", inserted);
-  console.log("Insert error:", error);
+  const { error } = await supabase.from("hero_slides").insert({
+    image_url: data.imageUrl,
+    link: data.link,
+    sort_order: data.sortOrder,
+    active: data.active,
+  });
 
   if (error) throw error;
 }
+
 export async function updateHeroSlide(
   id: string,
   data: {
