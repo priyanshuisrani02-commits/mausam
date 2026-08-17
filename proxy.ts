@@ -27,12 +27,10 @@ export async function proxy(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // Allow the admin login page
   if (pathname === "/admin/login") {
     return response;
   }
 
-  // Protect every other admin route
   if (pathname.startsWith("/admin")) {
     if (!user) {
       return NextResponse.redirect(
@@ -40,8 +38,16 @@ export async function proxy(request: NextRequest) {
       );
     }
 
-    // Only allow your admin account
-    if (user.email !== "mausamfes@gmail.com") {
+    const email = user.email?.trim().toLowerCase() ?? "";
+    const role =
+      typeof user.app_metadata?.role === "string"
+        ? user.app_metadata.role.trim().toLowerCase()
+        : "";
+
+    const isAdmin =
+      email === "mausamfes@gmail.com" || role === "admin";
+
+    if (!isAdmin) {
       await supabase.auth.signOut();
 
       return NextResponse.redirect(
