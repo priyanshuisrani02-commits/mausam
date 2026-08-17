@@ -37,12 +37,10 @@ export default function ProductCard({
   async function handleWishlist(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-
     if (!user) {
       router.push("/login");
       return;
     }
-
     try {
       await toggle(id);
     } catch (error) {
@@ -53,14 +51,11 @@ export default function ProductCard({
   async function handleAddToCart(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-
     if (!user) {
       router.push("/login");
       return;
     }
-
     const selectedSize = availableSizes?.[0] ?? "One Size";
-
     try {
       await addToCart(id, 1, selectedSize);
       alert(
@@ -74,21 +69,20 @@ export default function ProductCard({
   }
 
   return (
-    <Link href={`/products/${id}`} className="block">
-      <div className="group cursor-pointer">
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl">
+    <Link href={`/products/${id}`} className="block h-full">
+      <article className="group h-full overflow-hidden rounded-[22px] border border-[#e4ddd2] bg-[#fffdf8] shadow-[0_7px_25px_rgba(70,61,45,0.055)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(70,61,45,0.11)]">
+        <div className="relative overflow-hidden bg-[#eee8dd]">
           <img
             src={image || "/images/products/product1.png"}
             alt={name}
             loading="lazy"
-            className="aspect-[4/5] h-auto w-full object-cover transition duration-500 md:aspect-auto md:h-[450px] md:group-hover:scale-110"
+            className="aspect-[4/5] h-auto w-full object-cover transition duration-700 md:aspect-auto md:h-[430px] md:group-hover:scale-[1.045]"
           />
-
-          <div className="absolute inset-0 bg-black/0 transition duration-500 md:group-hover:bg-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#302d27]/10 via-transparent to-transparent opacity-60" />
 
           {newArrival && (
-            <div className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-[10px] font-medium tracking-[2px] sm:left-4 sm:top-4 sm:px-4 sm:text-sm">
-              NEW
+            <div className="absolute left-3 top-3 rounded-full border border-[#d0d6c0] bg-[#e7eadc] px-3 py-1.5 text-[9px] font-medium uppercase tracking-[2px] text-[#4f583e] sm:left-4 sm:top-4">
+              New
             </div>
           )}
 
@@ -97,9 +91,7 @@ export default function ProductCard({
             disabled={loading}
             onClick={handleWishlist}
             aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-            className={`absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-lg transition duration-300 sm:right-4 sm:top-4 ${
-              wishlisted ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"
-            }`}
+            className={`absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-[#fffdf8]/90 text-xl text-[#575248] shadow-sm backdrop-blur transition duration-300 sm:right-4 sm:top-4 ${wishlisted ? "text-[#a45b3f]" : "md:opacity-0 md:group-hover:opacity-100"}`}
           >
             {wishlisted ? "♥" : "♡"}
           </button>
@@ -107,27 +99,22 @@ export default function ProductCard({
           <button
             type="button"
             onClick={handleAddToCart}
-            className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-white px-4 py-2.5 text-xs font-medium text-black shadow-md transition-all duration-300 sm:bottom-6 sm:px-6 sm:py-3 sm:text-sm md:translate-y-6 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
+            className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-[#596246] px-5 py-2.5 text-[10px] font-medium uppercase tracking-[1.8px] text-white shadow-lg transition-all duration-300 hover:bg-[#465034] sm:bottom-5 sm:px-6 sm:py-3 md:translate-y-5 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
           >
-            Add to Cart
+            Add to cart
           </button>
         </div>
 
-        <h3 className="mt-3 line-clamp-2 text-base font-medium sm:mt-5 sm:text-xl">
-          {name}
-        </h3>
-
-        <p className="mt-1.5 text-sm text-gray-500 sm:mt-2 sm:text-base">
-          <span className={salePrice != null ? "font-medium text-black" : ""}>
-            ₹{displayPrice.toLocaleString("en-IN")}
-          </span>
-          {salePrice != null && (
-            <span className="ml-2 text-xs text-gray-400 line-through sm:text-sm">
-              ₹{price.toLocaleString("en-IN")}
+        <div className="px-4 py-4 sm:px-5 sm:py-5">
+          <h3 className="line-clamp-2 text-sm font-medium leading-5 text-[#3c3932] sm:text-base">{name}</h3>
+          <div className="mt-2 flex items-center gap-2">
+            <span className={salePrice != null ? "font-medium text-[#a45b3f]" : "font-medium text-[#4d493f]"}>
+              ₹{displayPrice.toLocaleString("en-IN")}
             </span>
-          )}
-        </p>
-      </div>
+            {salePrice != null && <span className="text-xs text-[#9a9287] line-through">₹{price.toLocaleString("en-IN")}</span>}
+          </div>
+        </div>
+      </article>
     </Link>
   );
 }

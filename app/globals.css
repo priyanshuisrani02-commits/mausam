@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8f5ee;
+  --foreground: #302d27;
+  --mausam-cream: #f8f5ee;
+  --mausam-paper: #fffdf8;
+  --mausam-sage: #6f7858;
+  --mausam-sage-dark: #4f583e;
+  --mausam-terracotta: #a45b3f;
+  --mausam-ochre: #c99a4a;
+  --mausam-rose: #c98f8b;
+  --mausam-monsoon: #718596;
+  --mausam-ink: #302d27;
+  --mausam-muted: #756f64;
+  --mausam-line: #e7e0d4;
 }
 
 @theme inline {
@@ -40,4 +51,26 @@ a {
 
 button {
   touch-action: manipulation;
+}
+
+::selection {
+  background: #d9d8c2;
+  color: var(--mausam-ink);
+}
+
+.mausam-serif {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.mausam-paper {
+  background: var(--mausam-paper);
+}
+
+.mausam-section {
+  background: var(--mausam-cream);
+}
+
+.mausam-rule {
+  height: 1px;
+  background: var(--mausam-line);
 }

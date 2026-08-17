@@ -7,150 +7,94 @@ import { useRouter } from "next/navigation";
 
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
-
-import {
-  getCategories,
-  type AdminCategory,
-} from "@/lib/admin-categories";
+import { getCategories, type AdminCategory } from "@/lib/admin-categories";
 
 export default function Navbar() {
   const [query, setQuery] = useState("");
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const router = useRouter();
-
   const { cart } = useCart();
   const { wishlist } = useWishlist();
 
   useEffect(() => {
     async function loadCategories() {
       try {
-        const data = await getCategories();
-        setCategories(data);
+        setCategories(await getCategories());
       } catch (error) {
         console.error(error);
       }
     }
-
     loadCategories();
   }, []);
 
   function handleSearch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
-    }
+    if (query.trim()) router.push(`/search?q=${encodeURIComponent(query.trim())}`);
   }
 
-  const cartCount = cart.reduce(
-    (total: number, item: { quantity: number }) => total + item.quantity,
-    0
-  );
-
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   const wishlistCount = wishlist.length;
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
-      <div className="mx-auto max-w-7xl px-3 py-3 sm:px-4 sm:py-4 md:px-8">
-        {/* Desktop */}
+    <header className="sticky top-0 z-50 border-b border-[#e7e0d4] bg-[#fffdf8]/95 shadow-[0_4px_24px_rgba(73,65,48,0.06)] backdrop-blur-md">
+      <div className="bg-[#697354] px-4 py-1.5 text-center text-[9px] font-medium uppercase tracking-[3px] text-white sm:text-[10px] sm:tracking-[4px]">
+        Inspired by every season · Made for every story
+      </div>
+
+      <div className="mx-auto max-w-[1440px] px-4 py-3 sm:px-6 sm:py-4 lg:px-10">
         <div className="hidden md:block">
-          <div className="mb-4 flex items-center justify-between gap-6">
-            <Link
-              href="/"
-              className="shrink-0 text-3xl font-light uppercase tracking-[8px] text-black lg:text-5xl lg:tracking-[18px]"
-            >
-              MAUSAM
-            </Link>
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-8">
+            <Link href="/" className="mausam-serif text-[31px] font-normal uppercase tracking-[10px] text-[#3c3a30] transition hover:text-[#697354] lg:text-[36px]">MAUSAM</Link>
 
-            <form onSubmit={handleSearch} className="w-full max-w-md">
-              <input
-                type="search"
-                placeholder="Search for products..."
-                aria-label="Search for products"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                className="w-full rounded-full border px-4 py-2 text-black outline-none transition focus:border-black"
-              />
-            </form>
+            <nav className="flex items-center justify-center gap-7 text-[11px] font-medium uppercase tracking-[2.2px] text-[#504b42] lg:gap-9">
+              <Link href="/" className="transition hover:text-[#697354]">Home</Link>
+              {categories.slice(0, 5).map((category) => (
+                <Link key={category.id} href={`/categories/${category.slug}`} className="whitespace-nowrap transition hover:text-[#697354]">{category.name}</Link>
+              ))}
+            </nav>
 
-            <div className="flex shrink-0 items-center gap-6">
+            <div className="flex items-center justify-end gap-5 text-[#4f4a42]">
+              <form onSubmit={handleSearch} className="hidden xl:block">
+                <div className="flex items-center border-b border-[#bdb5a8] pb-1">
+                  <span className="mr-2 text-base">⌕</span>
+                  <input type="search" placeholder="Search" aria-label="Search for products" value={query} onChange={(event) => setQuery(event.target.value)} className="w-24 bg-transparent text-xs outline-none placeholder:text-[#80796d]" />
+                </div>
+              </form>
               <AccountMenu />
-
-              <Link href="/wishlist" className="whitespace-nowrap hover:underline">
-                ❤️ Wishlist ({wishlistCount})
+              <Link href="/wishlist" className="relative text-sm uppercase tracking-[1px] transition hover:text-[#697354]" aria-label={`Wishlist, ${wishlistCount} items`}>
+                ♡
+                {wishlistCount > 0 && <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#a45b3f] px-1 text-[8px] text-white">{wishlistCount}</span>}
               </Link>
-
-              <Link href="/cart" className="whitespace-nowrap hover:underline">
-                Cart ({cartCount})
+              <Link href="/cart" className="relative text-sm uppercase tracking-[1px] transition hover:text-[#697354]" aria-label={`Shopping cart, ${cartCount} items`}>
+                Bag
+                {cartCount > 0 && <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#697354] px-1 text-[8px] text-white">{cartCount}</span>}
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Mobile */}
         <div className="md:hidden">
-          <div className="flex min-w-0 items-center justify-between gap-2">
-            <Link
-              href="/"
-              className="min-w-0 shrink text-xl font-light uppercase tracking-[4px] text-black sm:text-2xl sm:tracking-[6px]"
-            >
-              MAUSAM
-            </Link>
-
-            <div className="flex shrink-0 items-center gap-2 text-xs sm:gap-3 sm:text-sm">
-              <div className="max-w-[84px] truncate sm:max-w-[120px]">
-                <AccountMenu />
-              </div>
-
-              <Link
-                href="/wishlist"
-                aria-label={`Wishlist, ${wishlistCount} items`}
-                className="flex min-h-9 min-w-9 items-center justify-center rounded-full px-1"
-              >
-                <span aria-hidden="true">♡</span>
-                <span className="ml-0.5">{wishlistCount}</span>
-              </Link>
-
-              <Link
-                href="/cart"
-                aria-label={`Shopping cart, ${cartCount} items`}
-                className="flex min-h-9 min-w-9 items-center justify-center rounded-full px-1"
-              >
-                <span aria-hidden="true">🛒</span>
-                <span className="ml-0.5">{cartCount}</span>
-              </Link>
+          <div className="flex items-center justify-between gap-3">
+            <Link href="/" className="mausam-serif shrink-0 text-[24px] uppercase tracking-[6px] text-[#3c3a30] sm:text-[27px]">MAUSAM</Link>
+            <div className="flex items-center gap-2 text-[#4f4a42]">
+              <div className="max-w-[84px] truncate sm:max-w-[120px]"><AccountMenu /></div>
+              <Link href="/wishlist" aria-label={`Wishlist, ${wishlistCount} items`} className="flex min-h-9 min-w-9 items-center justify-center text-lg">♡<span className="ml-0.5 text-[10px]">{wishlistCount}</span></Link>
+              <Link href="/cart" aria-label={`Shopping bag, ${cartCount} items`} className="flex min-h-9 min-w-9 items-center justify-center text-[10px] font-medium uppercase tracking-[1px]">Bag<span className="ml-0.5">{cartCount}</span></Link>
             </div>
           </div>
 
-          <form onSubmit={handleSearch} className="mt-3 sm:mt-4">
-            <input
-              type="search"
-              placeholder="Search for products..."
-              aria-label="Search for products"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="h-10 w-full rounded-full border px-4 text-sm text-black outline-none transition focus:border-black sm:h-11"
-            />
+          <form onSubmit={handleSearch} className="mt-3">
+            <div className="flex items-center rounded-full border border-[#d9d1c4] bg-[#f8f5ee] px-4">
+              <span className="mr-2 text-base text-[#6f6a61]">⌕</span>
+              <input type="search" placeholder="Search your next favourite..." aria-label="Search for products" value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 w-full bg-transparent text-sm text-[#302d27] outline-none placeholder:text-[#8b8478]" />
+            </div>
           </form>
         </div>
       </div>
 
-      <nav
-        aria-label="Product categories"
-        className="flex gap-5 overflow-x-auto border-t px-3 py-2.5 text-sm text-black [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-6 sm:px-4 sm:py-3 md:justify-center md:overflow-visible"
-      >
-        <Link href="/" className="shrink-0 py-1">
-          Home
-        </Link>
-
+      <nav aria-label="Product categories" className="flex gap-6 overflow-x-auto border-t border-[#eee8de] px-4 py-2.5 text-[10px] font-medium uppercase tracking-[1.8px] text-[#625d54] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:hidden">
         {categories.map((category) => (
-          <Link
-            key={category.id}
-            href={`/categories/${category.slug}`}
-            className="shrink-0 py-1"
-          >
-            {category.name}
-          </Link>
+          <Link key={category.id} href={`/categories/${category.slug}`} className="shrink-0 py-1 transition hover:text-[#697354]">{category.name}</Link>
         ))}
       </nav>
     </header>

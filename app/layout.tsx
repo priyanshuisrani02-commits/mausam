@@ -7,7 +7,6 @@ import { WishlistProvider } from "@/context/WishlistContext";
 import { CartProvider } from "@/context/CartContext";
 
 import WhatsAppButton from "@/components/WhatsAppButton";
-// import CartDrawer from "@/components/CartDrawer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,18 +23,17 @@ export const metadata: Metadata = {
     default: "MAUSAM",
     template: "%s | MAUSAM",
   },
-
   description:
-    "Discover timeless women's fashion with MAUSAM. Elegant kurtis, co-ords, dresses, and everyday essentials crafted for every season.",
-
+    "MAUSAM — thoughtfully designed women's fashion inspired by the colours, moods and stories of every season.",
   keywords: [
     "MAUSAM",
     "Women's Fashion",
     "Kurtis",
-    "Co-ords",
+    "Salwar Set Suits",
     "Dresses",
     "Indian Fashion",
     "Ethnic Wear",
+    "Seasonal Fashion",
   ],
 };
 
@@ -49,26 +47,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-
+      <body className="min-h-full flex flex-col bg-[#f8f5ee] text-[#302d27]">
         <AuthProvider>
-
           <WishlistProvider>
-
             <CartProvider>
-
-              {/* <CartDrawer /> */}
-
               {children}
-
               <WhatsAppButton />
-
             </CartProvider>
-
           </WishlistProvider>
-
         </AuthProvider>
-
       </body>
     </html>
   );

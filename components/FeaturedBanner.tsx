@@ -26,47 +26,55 @@ export default function FeaturedBanner() {
         console.error("Featured banner fetch failed:", error);
       }
     }
-
     loadBanner();
   }, []);
 
   if (!banner) return null;
 
   return (
-    <section className="mx-auto my-10 max-w-7xl px-3 sm:my-14 sm:px-4 md:my-24 md:px-8">
-      <div className="relative h-[400px] overflow-hidden rounded-2xl sm:h-[460px] sm:rounded-3xl md:h-[500px]">
-        <Image
-          src={banner.image_url}
-          alt={banner.title}
-          fill
-          unoptimized
-          sizes="(max-width: 768px) 100vw, 1200px"
-          className="object-cover transition duration-700 hover:scale-105"
-        />
+    <section className="bg-[#f3ede2] px-3 py-10 sm:px-5 sm:py-14 md:px-10 md:py-20">
+      <div className="mx-auto max-w-[1400px] overflow-hidden rounded-[28px] border border-[#e3d9ca] bg-[#e8ddcf] shadow-[0_14px_42px_rgba(73,62,44,0.09)] md:rounded-[34px]">
+        <div className="grid min-h-[460px] md:grid-cols-[1.05fr_0.95fr]">
+          <div className="relative min-h-[300px] overflow-hidden md:min-h-[520px]">
+            <Image
+              src={banner.image_url}
+              alt={banner.title}
+              fill
+              unoptimized
+              sizes="(max-width: 768px) 100vw, 55vw"
+              className="object-cover transition duration-700 hover:scale-[1.02]"
+            />
+          </div>
 
-        <div className="absolute inset-0 bg-black/35" />
+          <div className="flex items-center bg-[#fffaf1] px-7 py-12 sm:px-12 sm:py-14 md:px-14 lg:px-20">
+            <div className="max-w-xl">
+              <div className="mb-5 flex items-center gap-3 text-[#697354]">
+                <span className="h-px w-10 bg-[#9da58c]" />
+                <span className="text-[9px] font-medium uppercase tracking-[3px]">MAUSAM seasonal story</span>
+              </div>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center text-white sm:px-8 md:px-10">
-          {banner.subtitle && (
-            <p className="text-[10px] uppercase tracking-[3px] sm:text-xs sm:tracking-[4px] md:text-sm md:tracking-[8px]">
-              {banner.subtitle}
-            </p>
-          )}
+              {banner.subtitle && (
+                <p className="text-[10px] font-medium uppercase tracking-[3px] text-[#8b7564] sm:text-xs sm:tracking-[4px]">
+                  {banner.subtitle}
+                </p>
+              )}
 
-          <h2 className="mt-2 max-w-[18rem] text-3xl font-extralight leading-[1.1] sm:max-w-xl sm:text-4xl md:mt-4 md:text-6xl">
-            {banner.title}
-          </h2>
+              <h2 className="mausam-serif mt-3 text-4xl leading-[1.05] text-[#39362f] sm:text-5xl lg:text-6xl">
+                {banner.title}
+              </h2>
 
-          <p className="mt-4 max-w-[18rem] text-xs leading-5 sm:mt-5 sm:max-w-md sm:text-sm sm:leading-6 md:mt-8 md:max-w-xl md:text-lg">
-            {banner.description}
-          </p>
+              <p className="mt-5 max-w-lg text-sm leading-7 text-[#6d675d] sm:text-base sm:leading-8">
+                {banner.description}
+              </p>
 
-          <Link
-            href={banner.button_link || "/"}
-            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full border border-white px-6 py-2.5 text-xs transition hover:bg-white hover:text-black sm:mt-6 sm:px-8 sm:text-sm md:mt-10 md:px-10 md:py-4 md:text-base"
-          >
-            {banner.button_text}
-          </Link>
+              <Link
+                href={banner.button_link || "/"}
+                className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-[#596246] px-7 py-3 text-[10px] font-medium uppercase tracking-[2.5px] text-white shadow-[0_7px_18px_rgba(79,88,62,0.18)] transition hover:bg-[#465034] sm:px-9"
+              >
+                {banner.button_text}
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>

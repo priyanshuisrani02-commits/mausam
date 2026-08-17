@@ -4,82 +4,50 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t bg-white sm:mt-20 md:mt-24">
-      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 sm:py-16 md:px-8 md:py-24">
-        {/* Brand */}
-        <div className="mb-10 text-center sm:mb-14">
-          <h2 className="text-3xl font-light tracking-[7px] text-black sm:text-5xl sm:tracking-[10px] md:text-5xl md:tracking-[14px]">
-            MAUSAM
-          </h2>
-
-          <p className="mt-4 text-sm leading-6 text-gray-500 sm:mt-5">
-            Timeless elegance.
-            <br className="sm:hidden" /> {" "}
-            Crafted for every season.
-          </p>
-        </div>
-
-        {/* Links */}
-        <div className="grid gap-10 border-y py-10 sm:gap-12 sm:py-12 md:grid-cols-3 md:gap-16">
-          {/* Shop */}
+    <footer className="mt-0 border-t border-[#ded6ca] bg-[#eee8dd]">
+      <div className="mx-auto max-w-[1400px] px-5 py-14 sm:px-8 sm:py-16 md:px-10 md:py-20">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-10">
           <div>
-            <h3 className="mb-4 text-sm font-semibold tracking-wide text-black sm:mb-5 sm:text-base">
-              SHOP
-            </h3>
+            <h2 className="mausam-serif text-4xl tracking-[8px] text-[#3c3a30] sm:text-5xl">MAUSAM</h2>
+            <p className="mt-4 max-w-sm text-sm leading-7 text-[#716a60]">
+              A wardrobe inspired by the changing sky, earth and seasons. Thoughtful silhouettes, considered colours and quiet luxury for every story.
+            </p>
+            <p className="mt-6 text-[10px] font-medium uppercase tracking-[3px] text-[#697354]">Every season. A new mood.</p>
+          </div>
 
-            <ul className="space-y-3 text-sm text-gray-600 sm:text-base">
-              <li><Link href="/" className="transition hover:text-black">New Arrivals</Link></li>
-              <li><Link href="/categories/kurtis" className="transition hover:text-black">Kurtis</Link></li>
-              <li><Link href="/categories/co-ords" className="transition hover:text-black">Co-ords</Link></li>
-              <li><Link href="/categories/dresses" className="transition hover:text-black">Dresses</Link></li>
-              <li><Link href="/categories/tops" className="transition hover:text-black">Tops</Link></li>
+          <div>
+            <h3 className="mb-5 text-[10px] font-semibold uppercase tracking-[2.5px] text-[#49453d]">Shop</h3>
+            <ul className="space-y-3 text-sm text-[#6f685e]">
+              <li><Link href="/" className="transition hover:text-[#697354]">New Arrivals</Link></li>
+              <li><Link href="/categories/kurtis" className="transition hover:text-[#697354]">Kurtis</Link></li>
+              <li><Link href="/categories/salwar-set-suits" className="transition hover:text-[#697354]">Salwar Set Suits</Link></li>
+              <li><Link href="/categories/dresses" className="transition hover:text-[#697354]">Dresses</Link></li>
+              <li><Link href="/categories/tops" className="transition hover:text-[#697354]">Tops</Link></li>
             </ul>
           </div>
 
-          {/* Customer Care */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold tracking-wide text-black sm:mb-5 sm:text-base">
-              CUSTOMER CARE
-            </h3>
-
-            <ul className="space-y-3 text-sm text-gray-600 sm:text-base">
-              <li><Link href="/shipping-policy" className="transition hover:text-black">Shipping Policy</Link></li>
-              <li><Link href="/return-policy" className="transition hover:text-black">Return Policy</Link></li>
-              <li><Link href="/privacy-policy" className="transition hover:text-black">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="transition hover:text-black">Terms &amp; Conditions</Link></li>
-              <li><Link href="/contact" className="transition hover:text-black">Contact Us</Link></li>
+            <h3 className="mb-5 text-[10px] font-semibold uppercase tracking-[2.5px] text-[#49453d]">Customer care</h3>
+            <ul className="space-y-3 text-sm text-[#6f685e]">
+              <li><Link href="/shipping-policy" className="transition hover:text-[#697354]">Shipping Policy</Link></li>
+              <li><Link href="/return-policy" className="transition hover:text-[#697354]">Return Policy</Link></li>
+              <li><Link href="/privacy-policy" className="transition hover:text-[#697354]">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="transition hover:text-[#697354]">Terms &amp; Conditions</Link></li>
+              <li><Link href="/contact" className="transition hover:text-[#697354]">Contact Us</Link></li>
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold tracking-wide text-black sm:mb-5 sm:text-base">
-              CONTACT
-            </h3>
-
-            <div className="space-y-4 break-words text-sm text-gray-600 sm:text-base">
-              <a href="mailto:mausamfes@gmail.com" className="block transition hover:text-black">
-                📧 mausamfes@gmail.com
-              </a>
-
-              <a
-                href="https://wa.me/919913558866"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block transition hover:text-black"
-              >
-                📱 WhatsApp
-              </a>
-
-              <a href="#" className="block transition hover:text-black">
-                📷 Mausam Designer&apos;s
-              </a>
+            <h3 className="mb-5 text-[10px] font-semibold uppercase tracking-[2.5px] text-[#49453d]">Contact</h3>
+            <div className="space-y-4 break-words text-sm text-[#6f685e]">
+              <a href="mailto:mausamfes@gmail.com" className="block transition hover:text-[#697354]">mausamfes@gmail.com</a>
+              <a href="https://wa.me/919913558866" target="_blank" rel="noopener noreferrer" className="block transition hover:text-[#697354]">WhatsApp</a>
+              <a href="#" className="block transition hover:text-[#697354]">Mausam Designer&apos;s</a>
             </div>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="pt-7 text-center text-xs text-gray-500 sm:pt-8 sm:text-sm">
+        <div className="mt-12 border-t border-[#d9d0c3] pt-7 text-center text-xs text-[#827a6e] sm:mt-14">
           © MAUSAM. All Rights Reserved.
         </div>
       </div>
