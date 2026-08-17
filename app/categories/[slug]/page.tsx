@@ -13,7 +13,6 @@ type Category = {
   id: string;
   name: string;
   image_url: string | null;
-  description: string | null;
 };
 
 export default function CategoryPage() {
@@ -29,7 +28,7 @@ export default function CategoryPage() {
 
       const { data: categoryData, error } = await supabase
         .from("categories")
-        .select("id,name,image_url,description")
+        .select("id,name,image_url")
         .eq("slug", slug)
         .single();
 
@@ -88,7 +87,7 @@ export default function CategoryPage() {
                 <h1 className="mausam-serif mt-3 text-4xl leading-tight text-[#39362f] sm:text-5xl md:text-6xl">{category.name}</h1>
                 <div className="mt-5 h-px w-14 bg-[#9da58c]" />
                 <p className="mt-5 max-w-xl text-sm leading-7 text-[#6f685e] sm:text-base">
-                  {category.description?.trim() || "Thoughtfully chosen silhouettes, textures and colours for every season and every story."}
+                  Thoughtfully chosen silhouettes, textures and colours for every season and every story.
                 </p>
                 <p className="mt-5 text-[10px] font-medium uppercase tracking-[2px] text-[#8b8377]">
                   {products.length} {products.length === 1 ? "piece" : "pieces"} in this edit
@@ -97,11 +96,7 @@ export default function CategoryPage() {
             </div>
 
             <div className="relative min-h-[280px] bg-[#ddd3c5] md:min-h-[360px]">
-              <img
-                src={category.image_url || "/images/placeholder.png"}
-                alt={category.name}
-                className="h-full w-full object-cover object-top"
-              />
+              <img src={category.image_url || "/images/placeholder.png"} alt={category.name} className="h-full w-full object-cover object-top" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#e9e1d5]/20 to-transparent" />
             </div>
           </div>
