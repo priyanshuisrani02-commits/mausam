@@ -44,6 +44,15 @@ img {
   max-width: 100%;
 }
 
+/* Product-page hero images must always show the complete garment/photo.
+   The desktop editorial frame is intentionally wider than a portrait product
+   image, so object-cover would crop the source. */
+main > section:first-of-type button[aria-label="Open product gallery"] > img {
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;
