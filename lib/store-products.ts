@@ -53,12 +53,12 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
 
   return products.map((product) => {
     const firstImage = images?.find(
-      (img) => img.product_id === product.id
+      (img) => img.product_id === product.id && Boolean(img.image_url)
     );
 
     return {
       ...product,
-      image: firstImage?.image_url ?? "/images/products/product1.png",
+      image: firstImage?.image_url ?? "",
     };
   });
 }
