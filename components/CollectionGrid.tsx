@@ -18,7 +18,13 @@ export default function CollectionGrid() {
 
   useEffect(() => {
     getCategories()
-      .then((all) => setCategories((all ?? []).filter((category) => category.show_on_homepage).sort((a, b) => a.sort_order - b.sort_order)))
+      .then((all) =>
+        setCategories(
+          (all ?? [])
+            .filter((category) => category.show_on_homepage)
+            .sort((a, b) => a.sort_order - b.sort_order)
+        )
+      )
       .catch(console.error);
   }, []);
 
@@ -29,33 +35,69 @@ export default function CollectionGrid() {
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-7 flex flex-col gap-3 md:mb-10 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="mb-2 text-[9px] font-medium uppercase tracking-[2.5px] text-[#7b756b] sm:text-[10px] sm:tracking-[3px]">The MAUSAM Edit</p>
-            <h2 className="mausam-serif text-[30px] font-normal leading-tight tracking-[0.5px] text-[#39362f] sm:text-4xl md:text-5xl">Four seasons. Endless stories.</h2>
+            <p className="mb-2 text-[9px] font-medium uppercase tracking-[2.5px] text-[#7b756b] sm:text-[10px] sm:tracking-[3px]">
+              The MAUSAM Edit
+            </p>
+            <h2 className="mausam-serif text-[30px] font-normal leading-tight tracking-[0.5px] text-[#39362f] sm:text-4xl md:text-5xl">
+              Four seasons. Endless stories.
+            </h2>
           </div>
-          <p className="max-w-md text-xs leading-5 text-[#746e63] sm:text-sm sm:leading-6 md:text-right">Discover silhouettes and colours chosen to move with your mood, your moments and every season in between.</p>
+          <p className="max-w-md text-xs leading-5 text-[#746e63] sm:text-sm sm:leading-6 md:text-right">
+            Discover silhouettes and colours chosen to move with your mood, your moments and every season in between.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {categories.slice(0, 4).map((category, index) => {
             const accent = accents[index % accents.length];
+
             return (
-              <Link key={category.id} href={`/categories/${category.slug}`} className="group overflow-hidden rounded-[18px] border border-[#e5ddd0] bg-[#fffdf8] shadow-[0_5px_18px_rgba(70,61,45,0.055)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(70,61,45,0.10)] sm:rounded-[22px]">
+              <Link
+                key={category.id}
+                href={`/categories/${category.slug}`}
+                className="group overflow-hidden rounded-[18px] border border-[#e5ddd0] bg-[#fffdf8] shadow-[0_5px_18px_rgba(70,61,45,0.055)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(70,61,45,0.10)] sm:rounded-[22px]"
+              >
+                {/*
+                  Category artwork is intentionally shown in its entirety.
+                  Several MAUSAM category artworks contain their own typography,
+                  so object-cover was cropping the left/right edges on narrow cards.
+                */}
                 <div className="relative aspect-[3/4] overflow-hidden bg-[#eee8dd]">
                   <img
                     src={category.image_url ?? "/images/placeholder.png"}
                     alt={category.name}
                     loading="lazy"
-                    className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.025]"
+                    className="h-full w-full object-contain object-center transition duration-700 group-hover:scale-[1.01]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#302d27]/82 via-[#302d27]/10 to-transparent" />
-                  <span className="absolute left-2.5 top-2.5 rounded-full border px-2 py-1 text-[7px] font-medium uppercase tracking-[1.2px] backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[9px] sm:tracking-[2px]" style={{ backgroundColor: `${accent.bg}e8`, borderColor: accent.line, color: accent.text }}>Seasonal edit</span>
-                  <div className="absolute inset-x-0 bottom-0 px-3 pb-3.5 sm:px-5 sm:pb-4">
-                    <h3 className="mausam-serif break-words text-[20px] leading-[1.05] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] sm:text-2xl">{category.name}</h3>
-                  </div>
+                  <span
+                    className="absolute left-2.5 top-2.5 rounded-full border px-2 py-1 text-[7px] font-medium uppercase tracking-[1.2px] backdrop-blur-sm sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[9px] sm:tracking-[2px]"
+                    style={{
+                      backgroundColor: `${accent.bg}e8`,
+                      borderColor: accent.line,
+                      color: accent.text,
+                    }}
+                  >
+                    Seasonal edit
+                  </span>
                 </div>
-                <div className="flex items-center justify-between gap-2 px-3 py-2.5 sm:px-5 sm:py-4" style={{ backgroundColor: accent.bg }}>
-                  <span className="text-[8px] font-medium uppercase tracking-[1.3px] text-[#655f55] sm:text-[9px] sm:tracking-[1.8px]">Explore collection</span>
-                  <span className="text-base leading-none sm:text-lg" style={{ color: accent.text }}>→</span>
+
+                {/* The title lives outside the artwork so it can never be cropped. */}
+                <div className="px-3 py-3 sm:px-5 sm:py-4" style={{ backgroundColor: accent.bg }}>
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="mausam-serif min-w-0 break-words text-[17px] leading-[1.08] text-[#39362f] sm:text-[22px]">
+                      {category.name}
+                    </h3>
+                    <span
+                      className="mt-0.5 shrink-0 text-base leading-none sm:text-lg"
+                      style={{ color: accent.text }}
+                      aria-hidden="true"
+                    >
+                      →
+                    </span>
+                  </div>
+                  <span className="mt-2 block text-[7px] font-medium uppercase tracking-[1.3px] text-[#655f55] sm:text-[9px] sm:tracking-[1.8px]">
+                    Explore collection
+                  </span>
                 </div>
               </Link>
             );
