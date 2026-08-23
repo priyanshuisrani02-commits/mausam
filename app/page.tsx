@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroCarousel from "@/components/HeroCarousel";
+import PrintsCarousel from "@/components/PrintsCarousel";
 import CollectionGrid from "@/components/CollectionGrid";
 import FeaturedBanner from "@/components/FeaturedBanner";
 import NewArrivals from "@/components/NewArrivalsFixed";
@@ -10,6 +11,7 @@ export default function Home() {
     <main className="min-h-screen bg-[#f8f5ee] text-[#302d27]">
       <Navbar />
       <HeroCarousel />
+      <PrintsCarousel />
       <CollectionGrid />
       <FeaturedBanner />
       <NewArrivals />
