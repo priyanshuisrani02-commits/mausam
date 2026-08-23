@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,7 +14,6 @@ import {
 } from "@/lib/homepage-prints";
 
 const emptyForm = { title: "", description: "", image_url: "", link: "", sort_order: 0, active: true };
-
 type FormState = typeof emptyForm;
 
 export default function HomepagePrintsAdminPage() {
@@ -51,7 +51,7 @@ export default function HomepagePrintsAdminPage() {
     setFile(null);
   }
 
-  async function save(event: React.FormEvent) {
+  async function save(event: FormEvent) {
     event.preventDefault();
     if (!form.title.trim()) return alert("Please enter a title.");
     if (!form.image_url.trim() && !file) return alert("Please add an image.");
