@@ -17,20 +17,11 @@ export default function HeroCarousel() {
     async function loadSlides() {
       try {
         const data = await getHeroSlides();
-        const activeSlides = data.filter((slide) => slide.active);
-        if (activeSlides.length > 0) {
-          setSlides(activeSlides);
-          return;
-        }
+        setSlides(data.filter((slide) => slide.active));
       } catch (error) {
         console.error("Hero fetch failed:", error);
+        setSlides([]);
       }
-
-      setSlides([
-        { id: "1", image_url: "/images/hero1.png", link: "/collections/new-arrivals", sort_order: 1, active: true },
-        { id: "2", image_url: "/images/hero2.png", link: "/collections/ethnic", sort_order: 2, active: true },
-        { id: "3", image_url: "/images/hero3.png", link: "/collections/tops", sort_order: 3, active: true },
-      ]);
     }
 
     loadSlides();
