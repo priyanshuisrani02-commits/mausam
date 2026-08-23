@@ -1,8 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getCategories, type AdminCategory } from "@/lib/admin-categories";
 
 export default function Footer() {
+  const [categories, setCategories] = useState<AdminCategory[]>([]);
+
+  useEffect(() => {
+    getCategories().then(setCategories).catch(console.error);
+  }, []);
+
   return (
     <footer className="mt-0 border-t border-[#ded6ca] bg-[#eee8dd]">
       <div className="mx-auto max-w-[1400px] px-5 py-14 sm:px-8 sm:py-16 md:px-10 md:py-20">
@@ -19,10 +27,11 @@ export default function Footer() {
             <h3 className="mb-5 text-[10px] font-semibold uppercase tracking-[2.5px] text-[#49453d]">Shop</h3>
             <ul className="space-y-3 text-sm text-[#6f685e]">
               <li><Link href="/" className="transition hover:text-[#697354]">New Arrivals</Link></li>
-              <li><Link href="/categories/kurtis" className="transition hover:text-[#697354]">Kurtis</Link></li>
-              <li><Link href="/categories/salwar-set-suits" className="transition hover:text-[#697354]">Salwar Set Suits</Link></li>
-              <li><Link href="/categories/dresses" className="transition hover:text-[#697354]">Dresses</Link></li>
-              <li><Link href="/categories/tops" className="transition hover:text-[#697354]">Tops</Link></li>
+              {categories.slice(0, 5).map((category) => (
+                <li key={category.id}>
+                  <Link href={`/categories/${category.slug}`} className="transition hover:text-[#697354]">{category.name}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
