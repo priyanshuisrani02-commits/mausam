@@ -8,31 +8,13 @@ import CollectionGrid from "@/components/CollectionGrid";
 import FeaturedBanner from "@/components/FeaturedBanner";
 import NewArrivals from "@/components/NewArrivalsFixed";
 import Footer from "@/components/Footer";
-import { supabase } from "@/lib/supabase";
-
-type HomepageBenefit = {
-  id: string;
-  title: string;
-  description: string;
-  sort_order: number;
-};
+import { getHomepageBenefits, type HomepageBenefit } from "@/lib/homepage-benefits";
 
 export default function Home() {
   const [benefits, setBenefits] = useState<HomepageBenefit[]>([]);
 
   useEffect(() => {
-    supabase
-      .from("homepage_benefits")
-      .select("id,title,description,sort_order")
-      .eq("active", true)
-      .order("sort_order", { ascending: true })
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("Homepage benefits fetch failed:", error);
-          return;
-        }
-        setBenefits(data ?? []);
-      });
+    getHomepageBenefits().then(setBenefits).catch((error) => console.error("Homepage benefits fetch failed:", error));
   }, []);
 
   return (
