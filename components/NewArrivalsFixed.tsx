@@ -61,7 +61,11 @@ export default function NewArrivalsFixed() {
               <Link key={product.id} href={`/products/${product.id}`} className="w-[82vw] max-w-[350px] shrink-0 snap-center">
                 <div className="overflow-hidden rounded-[22px] border border-[#e3dbcf] bg-[#fffdf8] shadow-[0_7px_24px_rgba(70,61,45,0.06)]">
                   <div className="relative aspect-[4/5] overflow-hidden bg-[#eee8dd]">
-                    <img src={product.image || "/images/products/product1.png"} alt={product.name} loading="lazy" className="h-full w-full object-cover" />
+                    {product.image ? (
+                      <img src={product.image} alt={product.name} loading="lazy" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center px-6 text-center text-[10px] uppercase tracking-[2px] text-[#8a8378]">Image unavailable</div>
+                    )}
                     <span className="absolute left-4 top-4 rounded-full bg-[#697354] px-3 py-1.5 text-[9px] font-medium uppercase tracking-[2px] text-white">New</span>
                   </div>
                   <div className="px-5 py-4">
