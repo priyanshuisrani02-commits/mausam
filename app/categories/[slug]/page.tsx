@@ -96,7 +96,11 @@ export default function CategoryPage() {
             </div>
 
             <div className="relative min-h-[280px] bg-[#ddd3c5] md:min-h-[360px]">
-              <img src={category.image_url || "/images/placeholder.png"} alt={category.name} className="h-full w-full object-cover object-top" />
+              {category.image_url ? (
+                <img src={category.image_url} alt={category.name} className="h-full w-full object-cover object-top" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center px-8 text-center text-[10px] uppercase tracking-[2px] text-[#8a8378]">Collection image unavailable</div>
+              )}
               <div className="absolute inset-0 bg-gradient-to-r from-[#e9e1d5]/20 to-transparent" />
             </div>
           </div>
