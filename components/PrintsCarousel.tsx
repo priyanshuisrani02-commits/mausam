@@ -33,22 +33,28 @@ export default function PrintsCarousel() {
     };
   }, []);
 
+  // Rotate whenever there are at least TWO images. This intentionally works
+  // with only two records; the two circles exchange front/back positions.
   useEffect(() => {
     if (items.length < 2) return;
 
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % items.length);
-    }, 3600);
+    }, 3000);
 
     return () => window.clearInterval(timer);
   }, [items.length]);
 
-  const visibleItems = useMemo(() => {
+  const stackedItems = useMemo(() => {
     if (!items.length) return [];
 
-    return Array.from({ length: Math.min(items.length, 5) }, (_, offset) => {
-      const index = (activeIndex + offset) % items.length;
-      return { item: items[index], offset };
+    // With 2–4 images, duplicate the sequence visually so the deck still
+    // looks layered rather than becoming a single isolated circle.
+    const renderCount = Math.min(Math.max(items.length, 4), 6);
+
+    return Array.from({ length: renderCount }, (_, slot) => {
+      const index = (activeIndex + slot) % items.length;
+      return { item: items[index], slot };
     });
   }, [items, activeIndex]);
 
@@ -101,18 +107,18 @@ export default function PrintsCarousel() {
         {!loading && !error && items.length > 0 && (
           <div className="relative mx-auto flex min-h-[390px] max-w-[760px] items-center justify-center sm:min-h-[500px]">
             <div className="relative h-[285px] w-[285px] sm:h-[380px] sm:w-[380px]">
-              {visibleItems.map(({ item, offset }) => {
-                const isActive = offset === 0;
-                const scale = 1 - offset * 0.075;
-                const translateX = offset * 30;
-                const translateY = offset * 10;
-                const rotate = offset * 2.5;
-                const opacity = 1 - offset * 0.11;
-                const zIndex = 20 - offset;
+              {stackedItems.map(({ item, slot }) => {
+                const isActive = slot === 0;
+                const scale = Math.max(0.72, 1 - slot * 0.085);
+                const translateX = slot * 32;
+                const translateY = slot * 11;
+                const rotate = slot * 3.2;
+                const opacity = Math.max(0.38, 1 - slot * 0.13);
+                const zIndex = 30 - slot;
 
                 const content = (
                   <div
-                    className="absolute inset-0 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                    className="absolute inset-0 transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
                     style={{
                       zIndex,
                       transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale}) rotate(${rotate}deg)`,
@@ -120,8 +126,8 @@ export default function PrintsCarousel() {
                     }}
                   >
                     <div
-                      className={`relative h-full w-full overflow-hidden rounded-full border-[7px] border-[#f4eee3] bg-[#eee7da] shadow-[0_18px_45px_rgba(73,62,44,0.16)] ring-1 ring-[#dfd4c3] ${
-                        isActive ? "" : "brightness-[0.93]"
+                      className={`relative h-full w-full overflow-hidden rounded-full border-[7px] border-[#f4eee3] bg-[#eee7da] shadow-[0_18px_45px_rgba(73,62,44,0.16)] ring-1 ring-[#dfd4c3] transition-[filter] duration-700 ${
+                        isActive ? "brightness-100" : "brightness-[0.91]"
                       }`}
                     >
                       <Image
@@ -151,9 +157,14 @@ export default function PrintsCarousel() {
                   </div>
                 );
 
+                // Stable keys are important: each physical deck position remains
+                // mounted, so its transform can actually animate when the active
+                // index changes. The image/content changes underneath that motion.
+                const key = `deck-slot-${slot}`;
+
                 return item.link ? (
                   <Link
-                    key={`${item.id}-${activeIndex}-${offset}`}
+                    key={key}
                     href={item.link}
                     aria-label={item.title}
                     className="absolute inset-0"
@@ -162,7 +173,7 @@ export default function PrintsCarousel() {
                   </Link>
                 ) : (
                   <button
-                    key={`${item.id}-${activeIndex}-${offset}`}
+                    key={key}
                     type="button"
                     onClick={isActive ? goNext : undefined}
                     aria-label={isActive ? `Next: ${item.title}` : item.title}
@@ -175,7 +186,7 @@ export default function PrintsCarousel() {
             </div>
 
             {items.length > 1 && (
-              <div className="absolute bottom-0 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 sm:bottom-1">
+              <div className="absolute bottom-0 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 sm:bottom-1">
                 <button
                   type="button"
                   onClick={goPrevious}
