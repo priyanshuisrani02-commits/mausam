@@ -9,7 +9,6 @@ export default function PrintsCarousel() {
   const [items, setItems] = useState<HomepagePrint[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -38,7 +37,6 @@ export default function PrintsCarousel() {
     if (items.length < 2) return;
 
     const timer = window.setInterval(() => {
-      setDirection(1);
       setActiveIndex((current) => (current + 1) % items.length);
     }, 3600);
 
@@ -48,8 +46,6 @@ export default function PrintsCarousel() {
   const visibleItems = useMemo(() => {
     if (!items.length) return [];
 
-    // Keep a small circular stack. The active card opens to the front while
-    // the following cards remain visibly tucked behind it.
     return Array.from({ length: Math.min(items.length, 5) }, (_, offset) => {
       const index = (activeIndex + offset) % items.length;
       return { item: items[index], offset };
@@ -58,13 +54,11 @@ export default function PrintsCarousel() {
 
   function goNext() {
     if (items.length < 2) return;
-    setDirection(1);
     setActiveIndex((current) => (current + 1) % items.length);
   }
 
   function goPrevious() {
     if (items.length < 2) return;
-    setDirection(-1);
     setActiveIndex((current) => (current - 1 + items.length) % items.length);
   }
 
@@ -109,13 +103,12 @@ export default function PrintsCarousel() {
             <div className="relative h-[285px] w-[285px] sm:h-[380px] sm:w-[380px]">
               {visibleItems.map(({ item, offset }) => {
                 const isActive = offset === 0;
-                const depth = offset;
-                const scale = 1 - depth * 0.075;
-                const translateX = depth * 30;
-                const translateY = depth * 10;
-                const rotate = depth * 2.5;
-                const opacity = 1 - depth * 0.11;
-                const zIndex = 20 - depth;
+                const scale = 1 - offset * 0.075;
+                const translateX = offset * 30;
+                const translateY = offset * 10;
+                const rotate = offset * 2.5;
+                const opacity = 1 - offset * 0.11;
+                const zIndex = 20 - offset;
 
                 const content = (
                   <div
