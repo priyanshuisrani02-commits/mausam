@@ -27,15 +27,15 @@ export default function FeaturedBanner() {
               fill
               unoptimized
               sizes="(max-width: 768px) 100vw, 52vw"
-              className="object-contain object-center p-2 transition duration-700 hover:scale-[1.015] sm:p-4 md:p-6"
+              className="object-cover object-center p-0 transition duration-700 hover:scale-[1.015] sm:p-0"
             />
           </div>
-          <div className="flex items-center bg-[#fffaf1] px-6 py-9 sm:px-10 sm:py-11 md:px-12 lg:px-16">
-            <div className="max-w-xl">
-              <div className="mb-4 flex items-center gap-2.5 text-[#697354] sm:mb-5 sm:gap-3"><span className="h-px w-7 bg-[#9da58c] sm:w-10" /><span className="text-[8px] font-medium uppercase tracking-[2px] sm:text-[9px] sm:tracking-[3px]">MAUSAM seasonal story</span></div>
+          <div className="flex items-center justify-center bg-[#fffaf1] px-6 py-10 text-center sm:px-10 sm:py-12 md:px-12 lg:px-16">
+            <div className="mx-auto max-w-xl">
+              <div className="mb-4 flex items-center justify-center gap-2.5 text-[#697354] sm:mb-5 sm:gap-3"><span className="h-px w-7 bg-[#9da58c] sm:w-10" /><span className="text-[8px] font-medium uppercase tracking-[2px] sm:text-[9px] sm:tracking-[3px]">MAUSAM seasonal story</span><span className="h-px w-7 bg-[#9da58c] sm:w-10" /></div>
               {banner.subtitle && <p className="text-[9px] font-medium uppercase tracking-[2.5px] text-[#8b7564] sm:text-xs sm:tracking-[4px]">{banner.subtitle}</p>}
               <h2 className="mausam-serif mt-2.5 text-[30px] leading-[1.05] text-[#39362f] sm:text-5xl lg:text-[54px]">{banner.title}</h2>
-              <p className="mt-4 text-[13px] leading-6 text-[#6d675d] sm:mt-5 sm:text-base sm:leading-7">{banner.description}</p>
+              <p className="mx-auto mt-4 max-w-lg text-[13px] leading-6 text-[#6d675d] sm:mt-5 sm:text-base sm:leading-7">{banner.description}</p>
               <Link href={banner.button_link || "/"} className="mt-6 inline-flex min-h-10 items-center justify-center rounded-full bg-[#596246] px-6 py-2.5 text-[9px] font-medium uppercase tracking-[2px] text-white shadow-[0_7px_18px_rgba(79,88,62,0.18)] transition hover:bg-[#465034] sm:mt-7 sm:min-h-11 sm:px-9 sm:py-3 sm:text-[10px]">{banner.button_text}</Link>
             </div>
           </div>
