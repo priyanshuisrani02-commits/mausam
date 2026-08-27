@@ -5,16 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { getHomepagePrints, type HomepagePrint } from "@/lib/homepage-prints";
 
-type HomepagePrint = {
-  id: string;
-  title: string;
-  description: string | null;
-  image_url: string;
-  link: string | null;
-  sort_order: number;
-  active: boolean;
-};
-
 export default function PrintsCarousel() {
   const [items, setItems] = useState<HomepagePrint[]>([]);
   const [loading, setLoading] = useState(true);
