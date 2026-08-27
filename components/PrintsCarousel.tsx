@@ -105,7 +105,7 @@ export default function PrintsCarousel() {
         )}
 
         {!loading && !error && items.length > 0 && (
-          <div className="relative mx-auto flex min-h-[420px] w-full max-w-[760px] items-center justify-center overflow-visible sm:min-h-[500px]">
+          <div className="relative mx-auto flex min-h-[420px] w-full max-w-[760px] items-center justify-center overflow-visible sm:min-h-[500px] [perspective:1000px]">
             <div className="relative h-[270px] w-[270px] sm:h-[380px] sm:w-[380px]">
               {stackedItems.map(({ item, slot }) => {
                 const isActive = slot === 0;
@@ -160,7 +160,7 @@ export default function PrintsCarousel() {
                 // Stable keys are important: each physical deck position remains
                 // mounted, so its transform can actually animate when the active
                 // index changes. The image/content changes underneath that motion.
-                const key = `deck-slot-${slot}`;
+                const key = item.id;
 
                 return item.link ? (
                   <Link
