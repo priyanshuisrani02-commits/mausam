@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getHomepagePrints, type HomepagePrint } from "@/lib/homepage-prints";
+
 type HomepagePrint = {
   id: string;
   title: string;
@@ -22,11 +24,7 @@ export default function PrintsCarousel() {
   useEffect(() => {
     let mounted = true;
 
-    fetch("/api/homepage-prints", { cache: "no-store" })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("Homepage prints API request failed");
-        return (await response.json()) as HomepagePrint[];
-      })
+    getHomepagePrints()
       .then((data) => {
         if (!mounted) return;
         setItems(data);
@@ -146,7 +144,7 @@ export default function PrintsCarousel() {
                         src={item.image_url}
                         alt={item.title}
                         fill
-                        sizes="(max-width: 640px) 285px, 380px"
+                        sizes="(max-width: 640px) 270px, 380px"
                         unoptimized
                         priority={isActive}
                         className="object-cover"
@@ -172,7 +170,7 @@ export default function PrintsCarousel() {
                 // Stable keys are important: each physical deck position remains
                 // mounted, so its transform can actually animate when the active
                 // index changes. The image/content changes underneath that motion.
-                const key = item.id;
+                const key = `deck-slot-${slot}`;
 
                 return item.link ? (
                   <Link
