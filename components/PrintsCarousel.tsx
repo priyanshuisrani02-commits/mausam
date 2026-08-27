@@ -105,13 +105,13 @@ export default function PrintsCarousel() {
         )}
 
         {!loading && !error && items.length > 0 && (
-          <div className="relative mx-auto flex min-h-[390px] max-w-[760px] items-center justify-center sm:min-h-[500px]">
-            <div className="relative h-[285px] w-[285px] sm:h-[380px] sm:w-[380px]">
+          <div className="relative mx-auto flex min-h-[420px] w-full max-w-[760px] items-center justify-center overflow-visible sm:min-h-[500px]">
+            <div className="relative h-[270px] w-[270px] sm:h-[380px] sm:w-[380px]">
               {stackedItems.map(({ item, slot }) => {
                 const isActive = slot === 0;
                 const scale = Math.max(0.72, 1 - slot * 0.085);
-                const translateX = slot * 32;
-                const translateY = slot * 11;
+                const translateX = slot * 24;
+                const translateY = slot * 9;
                 const rotate = slot * 3.2;
                 const opacity = Math.max(0.38, 1 - slot * 0.13);
                 const zIndex = 30 - slot;
