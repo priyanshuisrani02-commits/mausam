@@ -105,13 +105,13 @@ export default function PrintsCarousel() {
         )}
 
         {!loading && !error && items.length > 0 && (
-          <div className="relative mx-auto flex min-h-[420px] w-full max-w-[760px] items-center justify-center overflow-visible sm:min-h-[500px] [perspective:1000px]">
-            <div className="relative h-[270px] w-[270px] sm:h-[380px] sm:w-[380px]">
+          <div className="relative mx-auto flex min-h-[500px] w-full max-w-[760px] items-center justify-center overflow-visible sm:min-h-[560px] [perspective:1000px] [--stack-gap-x:30px] [--stack-gap-y:12px] sm:[--stack-gap-x:24px] sm:[--stack-gap-y:9px]">
+            <div className="relative h-[230px] w-[230px] sm:h-[380px] sm:w-[380px]">
               {stackedItems.map(({ item, slot }) => {
                 const isActive = slot === 0;
                 const scale = Math.max(0.72, 1 - slot * 0.085);
-                const translateX = slot * 24;
-                const translateY = slot * 9;
+                const translateX = `calc(${slot} * var(--stack-gap-x))`;
+                const translateY = `calc(${slot} * var(--stack-gap-y))`;
                 const rotate = slot * 3.2;
                 const opacity = Math.max(0.38, 1 - slot * 0.13);
                 const zIndex = 30 - slot;
@@ -121,7 +121,7 @@ export default function PrintsCarousel() {
                     className="absolute inset-0 transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
                     style={{
                       zIndex,
-                      transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale}) rotate(${rotate}deg)`,
+                      transform: `translate3d(${translateX}, ${translateY}, 0) scale(${scale}) rotate(${rotate}deg)`,
                       opacity,
                     }}
                   >
@@ -134,7 +134,7 @@ export default function PrintsCarousel() {
                         src={item.image_url}
                         alt={item.title}
                         fill
-                        sizes="(max-width: 640px) 270px, 380px"
+                        sizes="(max-width: 640px) 230px, 380px"
                         unoptimized
                         priority={isActive}
                         className="object-cover"
@@ -143,7 +143,7 @@ export default function PrintsCarousel() {
                     </div>
 
                     {isActive && (
-                      <div className="absolute -bottom-16 left-1/2 w-[250px] -translate-x-1/2 text-center sm:-bottom-20 sm:w-[340px]">
+                      <div className="absolute -bottom-24 left-1/2 w-[260px] -translate-x-1/2 text-center sm:-bottom-28 sm:w-[340px]">
                         <h3 className="mausam-serif text-xl leading-tight text-[#403b33] sm:text-2xl">
                           {item.title}
                         </h3>
@@ -186,7 +186,7 @@ export default function PrintsCarousel() {
             </div>
 
             {items.length > 1 && (
-              <div className="absolute bottom-0 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 sm:bottom-1">
+              <div className="absolute bottom-1 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 sm:bottom-2">
                 <button
                   type="button"
                   onClick={goPrevious}
