@@ -35,15 +35,21 @@ export default function PrintsCarousel() {
 
   useEffect(() => {
     if (!selectedItem) return;
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") setSelectedItem(null); };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedItem(null);
+    };
+
     document.addEventListener("keydown", onKeyDown);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => { document.removeEventListener("keydown", onKeyDown); document.body.style.overflow = previousOverflow; };
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [selectedItem]);
 
-  // Rotate whenever there are at least TWO images. This intentionally works
-  // with only two records; the two circles exchange front/back positions.
   useEffect(() => {
     if (items.length < 2) return;
 
@@ -57,8 +63,6 @@ export default function PrintsCarousel() {
   const stackedItems = useMemo(() => {
     if (!items.length) return [];
 
-    // With 2–4 images, duplicate the sequence visually so the deck still
-    // looks layered rather than becoming a single isolated circle.
     const renderCount = Math.min(Math.max(items.length, 4), 6);
 
     return Array.from({ length: renderCount }, (_, slot) => {
@@ -76,6 +80,8 @@ export default function PrintsCarousel() {
     if (items.length < 2) return;
     setActiveIndex((current) => (current - 1 + items.length) % items.length);
   }
+
+  const activeItem = items[activeIndex];
 
   return (
     <section
@@ -114,7 +120,7 @@ export default function PrintsCarousel() {
         )}
 
         {!loading && !error && items.length > 0 && (
-          <div className="relative mx-auto flex min-h-[590px] w-full max-w-[760px] items-center justify-center overflow-visible sm:min-h-[700px] [perspective:1000px] [--stack-gap-x:30px] [--stack-gap-y:12px] sm:[--stack-gap-x:24px] sm:[--stack-gap-y:9px]">
+          <div className="relative mx-auto flex w-full max-w-[760px] flex-col items-center overflow-visible [perspective:1000px]">
             <div className="relative h-[230px] w-[230px] sm:h-[380px] sm:w-[380px]">
               {stackedItems.map(({ item, slot }) => {
                 const isActive = slot === 0;
@@ -148,40 +154,9 @@ export default function PrintsCarousel() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                     </div>
-
-                    {isActive && (
-                      <div className="absolute -bottom-36 left-1/2 w-[320px] -translate-x-1/2 text-center sm:-bottom-40 sm:w-[420px]">
-                        <h3 className="mausam-serif text-xl leading-tight text-[#403b33] sm:text-2xl">
-                          {item.title}
-                        </h3>
-                        {item.description && (
-                          <p className="mx-auto mt-1.5 max-w-[290px] text-[10px] leading-4 text-[#81796d] sm:text-xs sm:leading-5">
-                            {item.description}
-                          </p>
-                        )}
-                        {items.length > 1 && (
-                          <div className="mt-6 flex items-center justify-center gap-3 sm:mt-7">
-                            <button type="button" onClick={goPrevious} aria-label="Previous print" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9cdbb] bg-[#fffaf1]/95 text-base text-[#5b6046] shadow-sm transition hover:bg-[#eee7d8] active:scale-95">←</button>
-                            <div className="flex items-center gap-1.5" aria-hidden="true">
-                              {items.map((dotItem, index) => (
-                                <span key={dotItem.id} className={`h-1.5 rounded-full transition-all duration-500 ${
-                                  index === activeIndex ? "w-6 bg-[#5b6046]" : "w-1.5 bg-[#d9cdbb]"
-                                }`} />
-                              ))}
-                            </div>
-                            <button type="button" onClick={goNext} aria-label="Next print" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9cdbb] bg-[#fffaf1]/95 text-base text-[#5b6046] shadow-sm transition hover:bg-[#eee7d8] active:scale-95">→</button>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                      </div>
-                    )}
                   </div>
                 );
 
-                // Stable keys are important: each physical deck position remains
-                // mounted, so its transform can actually animate when the active
-                // index changes. The image/content changes underneath that motion.
                 const key = `deck-slot-${slot}`;
 
                 return item.link ? (
@@ -207,34 +182,50 @@ export default function PrintsCarousel() {
               })}
             </div>
 
-            {items.length > 1 && (
-              <div className="absolute top-[calc(50%+190px)] left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 sm:top-[calc(50%+340px)]">
-                <button
-                  type="button"
-                  onClick={goPrevious}
-                  aria-label="Previous print"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9cdbb] bg-[#fffaf1]/95 text-base text-[#5b6046] shadow-sm transition hover:bg-[#eee7d8] active:scale-95"
-                >
-                  ←
-                </button>
-                <div className="flex items-center gap-1.5" aria-hidden="true">
-                  {items.map((item, index) => (
-                    <span
-                      key={item.id}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${
-                        index === activeIndex ? "w-6 bg-[#5b6046]" : "w-1.5 bg-[#d9cdbb]"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={goNext}
-                  aria-label="Next print"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9cdbb] bg-[#fffaf1]/95 text-base text-[#5b6046] shadow-sm transition hover:bg-[#eee7d8] active:scale-95"
-                >
-                  →
-                </button>
+            {activeItem && (
+              <div className="mt-8 w-full text-center sm:mt-10">
+                <h3 className="mausam-serif text-xl leading-tight text-[#403b33] sm:text-2xl">
+                  {activeItem.title}
+                </h3>
+
+                {activeItem.description && (
+                  <p className="mx-auto mt-1.5 max-w-[290px] text-[10px] leading-4 text-[#81796d] sm:text-xs sm:leading-5">
+                    {activeItem.description}
+                  </p>
+                )}
+
+                {items.length > 1 && (
+                  <div className="mt-6 flex items-center justify-center gap-3 sm:mt-7">
+                    <button
+                      type="button"
+                      onClick={goPrevious}
+                      aria-label="Previous print"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9cdbb] bg-[#fffaf1]/95 text-base text-[#5b6046] shadow-sm transition hover:bg-[#eee7d8] active:scale-95"
+                    >
+                      ←
+                    </button>
+
+                    <div className="flex items-center gap-1.5" aria-hidden="true">
+                      {items.map((item, index) => (
+                        <span
+                          key={item.id}
+                          className={`h-1.5 rounded-full transition-all duration-500 ${
+                            index === activeIndex ? "w-6 bg-[#5b6046]" : "w-1.5 bg-[#d9cdbb]"
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      aria-label="Next print"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9cdbb] bg-[#fffaf1]/95 text-base text-[#5b6046] shadow-sm transition hover:bg-[#eee7d8] active:scale-95"
+                    >
+                      →
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -242,14 +233,38 @@ export default function PrintsCarousel() {
       </div>
 
       {selectedItem && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm sm:p-8" role="dialog" aria-modal="true" onClick={() => setSelectedItem(null)}>
-          <div className="relative flex max-h-[92vh] max-w-[92vw] flex-col items-center" onClick={(event) => event.stopPropagation()}>
-            <button type="button" onClick={() => setSelectedItem(null)} aria-label="Close larger image" className="absolute -right-2 -top-12 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-xl text-[#39362f] shadow-lg sm:-right-12 sm:top-0">×</button>
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm sm:p-8"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setSelectedItem(null)}
+        >
+          <div
+            className="relative flex max-h-[92vh] max-w-[92vw] flex-col items-center"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setSelectedItem(null)}
+              aria-label="Close larger image"
+              className="absolute -right-2 -top-12 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-xl text-[#39362f] shadow-lg sm:-right-12 sm:top-0"
+            >
+              ×
+            </button>
+
             <div className="relative max-h-[78vh] max-w-[92vw] overflow-hidden rounded-2xl bg-[#fffdf8] shadow-2xl ring-1 ring-white/20">
-              <img src={selectedItem.image_url} alt={selectedItem.title} decoding="async" className="max-h-[78vh] w-auto max-w-[92vw] object-contain" />
+              <img
+                src={selectedItem.image_url}
+                alt={selectedItem.title}
+                decoding="async"
+                className="max-h-[78vh] w-auto max-w-[92vw] object-contain"
+              />
             </div>
+
             <div className="mt-4 rounded-full bg-[#fffdf8] px-5 py-2 text-center shadow-lg">
-              <h3 className="mausam-serif text-lg text-[#403b33] sm:text-xl">{selectedItem.title}</h3>
+              <h3 className="mausam-serif text-lg text-[#403b33] sm:text-xl">
+                {selectedItem.title}
+              </h3>
             </div>
           </div>
         </div>
