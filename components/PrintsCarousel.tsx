@@ -150,7 +150,7 @@ export default function PrintsCarousel() {
                     </div>
 
                     {isActive && (
-                      <div className="absolute -bottom-20 left-1/2 w-[260px] -translate-x-1/2 text-center sm:-bottom-24 sm:w-[340px]">
+                      <div className="absolute -bottom-36 left-1/2 w-[320px] -translate-x-1/2 text-center sm:-bottom-40 sm:w-[420px]">
                         <h3 className="mausam-serif text-xl leading-tight text-[#403b33] sm:text-2xl">
                           {item.title}
                         </h3>
@@ -159,6 +159,21 @@ export default function PrintsCarousel() {
                             {item.description}
                           </p>
                         )}
+                        {items.length > 1 && (
+                          <div className="mt-6 flex items-center justify-center gap-3 sm:mt-7">
+                            <button type="button" onClick={goPrevious} aria-label="Previous print" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9cdbb] bg-[#fffaf1]/95 text-base text-[#5b6046] shadow-sm transition hover:bg-[#eee7d8] active:scale-95">←</button>
+                            <div className="flex items-center gap-1.5" aria-hidden="true">
+                              {items.map((dotItem, index) => (
+                                <span key={dotItem.id} className={`h-1.5 rounded-full transition-all duration-500 ${
+                                  index === activeIndex ? "w-6 bg-[#5b6046]" : "w-1.5 bg-[#d9cdbb]"
+                                }`} />
+                              ))}
+                            </div>
+                            <button type="button" onClick={goNext} aria-label="Next print" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9cdbb] bg-[#fffaf1]/95 text-base text-[#5b6046] shadow-sm transition hover:bg-[#eee7d8] active:scale-95">→</button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                       </div>
                     )}
                   </div>
