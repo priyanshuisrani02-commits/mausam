@@ -10,6 +10,7 @@ export default function PrintsCarousel() {
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [error, setError] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<HomepagePrint | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -32,6 +33,15 @@ export default function PrintsCarousel() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!selectedItem) return;
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") setSelectedItem(null); };
+    document.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKeyDown); document.body.style.overflow = previousOverflow; };
+  }, [selectedItem]);
 
   // Rotate whenever there are at least TWO images. This intentionally works
   // with only two records; the two circles exchange front/back positions.
@@ -175,8 +185,8 @@ export default function PrintsCarousel() {
                   <button
                     key={key}
                     type="button"
-                    onClick={isActive ? goNext : undefined}
-                    aria-label={isActive ? `Next: ${item.title}` : item.title}
+                    onClick={isActive ? () => setSelectedItem(item) : undefined}
+                    aria-label={isActive ? `View larger: ${item.title}` : item.title}
                     className="absolute inset-0 text-left"
                   >
                     {content}
@@ -218,6 +228,20 @@ export default function PrintsCarousel() {
           </div>
         )}
       </div>
+
+      {selectedItem && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm sm:p-8" role="dialog" aria-modal="true" onClick={() => setSelectedItem(null)}>
+          <div className="relative flex max-h-[92vh] max-w-[92vw] flex-col items-center" onClick={(event) => event.stopPropagation()}>
+            <button type="button" onClick={() => setSelectedItem(null)} aria-label="Close larger image" className="absolute -right-2 -top-12 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-xl text-[#39362f] shadow-lg sm:-right-12 sm:top-0">×</button>
+            <div className="relative max-h-[78vh] max-w-[92vw] overflow-hidden rounded-2xl bg-[#fffdf8] shadow-2xl ring-1 ring-white/20">
+              <Image src={selectedItem.image_url} alt={selectedItem.title} width={1400} height={1400} unoptimized className="max-h-[78vh] w-auto max-w-[92vw] object-contain" />
+            </div>
+            <div className="mt-4 rounded-full bg-[#fffdf8] px-5 py-2 text-center shadow-lg">
+              <h3 className="mausam-serif text-lg text-[#403b33] sm:text-xl">{selectedItem.title}</h3>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
