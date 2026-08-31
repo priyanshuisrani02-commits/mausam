@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { getHomepagePrints, type HomepagePrint } from "@/lib/homepage-prints";
 
 export default function PrintsCarousel() {
@@ -140,14 +139,12 @@ export default function PrintsCarousel() {
                         isActive ? "brightness-100" : "brightness-[0.91]"
                       }`}
                     >
-                      <Image
+                      <img
                         src={item.image_url}
                         alt={item.title}
-                        fill
-                        sizes="(max-width: 640px) 230px, 380px"
-                        unoptimized
-                        priority={isActive}
-                        className="object-cover"
+                        loading={isActive ? "eager" : "lazy"}
+                        decoding="async"
+                        className="absolute inset-0 h-full w-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                     </div>
@@ -234,7 +231,7 @@ export default function PrintsCarousel() {
           <div className="relative flex max-h-[92vh] max-w-[92vw] flex-col items-center" onClick={(event) => event.stopPropagation()}>
             <button type="button" onClick={() => setSelectedItem(null)} aria-label="Close larger image" className="absolute -right-2 -top-12 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-xl text-[#39362f] shadow-lg sm:-right-12 sm:top-0">×</button>
             <div className="relative max-h-[78vh] max-w-[92vw] overflow-hidden rounded-2xl bg-[#fffdf8] shadow-2xl ring-1 ring-white/20">
-              <Image src={selectedItem.image_url} alt={selectedItem.title} width={1400} height={1400} unoptimized className="max-h-[78vh] w-auto max-w-[92vw] object-contain" />
+              <img src={selectedItem.image_url} alt={selectedItem.title} decoding="async" className="max-h-[78vh] w-auto max-w-[92vw] object-contain" />
             </div>
             <div className="mt-4 rounded-full bg-[#fffdf8] px-5 py-2 text-center shadow-lg">
               <h3 className="mausam-serif text-lg text-[#403b33] sm:text-xl">{selectedItem.title}</h3>
