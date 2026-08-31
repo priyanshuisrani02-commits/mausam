@@ -114,7 +114,7 @@ export default function PrintsCarousel() {
         )}
 
         {!loading && !error && items.length > 0 && (
-          <div className="relative mx-auto flex min-h-[560px] w-full max-w-[760px] items-center justify-center overflow-visible sm:min-h-[620px] [perspective:1000px] [--stack-gap-x:30px] [--stack-gap-y:12px] sm:[--stack-gap-x:24px] sm:[--stack-gap-y:9px]">
+          <div className="relative mx-auto flex min-h-[590px] w-full max-w-[760px] items-center justify-center overflow-visible sm:min-h-[700px] [perspective:1000px] [--stack-gap-x:30px] [--stack-gap-y:12px] sm:[--stack-gap-x:24px] sm:[--stack-gap-y:9px]">
             <div className="relative h-[230px] w-[230px] sm:h-[380px] sm:w-[380px]">
               {stackedItems.map(({ item, slot }) => {
                 const isActive = slot === 0;
@@ -193,7 +193,7 @@ export default function PrintsCarousel() {
             </div>
 
             {items.length > 1 && (
-              <div className="absolute bottom-[-58px] left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 sm:bottom-[-64px]">
+              <div className="absolute top-[calc(50%+190px)] left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 sm:top-[calc(50%+340px)]">
                 <button
                   type="button"
                   onClick={goPrevious}
