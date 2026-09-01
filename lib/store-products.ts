@@ -17,8 +17,11 @@ export type StoreProduct = {
   image: string;
 };
 
-export async function getStoreProducts(): Promise<StoreProduct[]> {
-  const { data: products, error } = await supabase
+export async function getStoreProducts(options?: {
+  newArrivalOnly?: boolean;
+  limit?: number;
+}): Promise<StoreProduct[]> {
+  let query = supabase
     .from("products")
     .select(`
       id,
@@ -33,31 +36,31 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
       new_arrival,
       category_id,
       available_sizes,
-      created_at
+      created_at,
+      product_images(image_url, sort_order)
     `)
     .order("created_at", { ascending: false });
+
+  if (options?.newArrivalOnly) query = query.eq("new_arrival", true);
+  if (options?.limit) query = query.limit(options.limit);
+
+  const { data: products, error } = await query;
 
   if (error || !products) {
     console.error("Failed to load products:", error);
     return [];
   }
 
-  const { data: images, error: imageError } = await supabase
-    .from("product_images")
-    .select("product_id, image_url")
-    .order("sort_order", { ascending: true });
+  return products.map((product: any) => {
+    const images = Array.isArray(product.product_images) ? product.product_images : [];
+    const firstImage = [...images]
+      .filter((img) => Boolean(img.image_url))
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
 
-  if (imageError) {
-    console.error("Failed to load product images:", imageError);
-  }
-
-  return products.map((product) => {
-    const firstImage = images?.find(
-      (img) => img.product_id === product.id && Boolean(img.image_url)
-    );
+    const { product_images: _productImages, ...productData } = product;
 
     return {
-      ...product,
+      ...productData,
       image: firstImage?.image_url ?? "",
     };
   });
