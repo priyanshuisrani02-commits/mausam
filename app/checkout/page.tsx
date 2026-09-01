@@ -92,8 +92,27 @@ export default function CheckoutPage() {
   const itemCount = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
 
   async function handlePlaceOrder() {
-    if (Object.values(form).some((value) => !value.trim())) {
+    const normalized = Object.fromEntries(
+      Object.entries(form).map(([key, value]) => [key, value.trim()])
+    ) as typeof form;
+
+    if (Object.values(normalized).some((value) => !value)) {
       alert("Please complete all delivery details.");
+      return;
+    }
+
+    if (normalized.pincode.length < 4 || normalized.pincode.length > 10) {
+      alert("Please enter a valid pincode.");
+      return;
+    }
+
+    if (normalized.phone.length < 7 || normalized.phone.length > 20) {
+      alert("Please enter a valid phone number.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized.email)) {
+      alert("Please enter a valid email address.");
       return;
     }
     if (items.length === 0) {
@@ -103,7 +122,7 @@ export default function CheckoutPage() {
 
     try {
       setLoading(true);
-      const order = await placeOrder(form);
+      const order = await placeOrder(normalized);
       router.push(`/order-success?id=${order.id}`);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Unable to place your order.");
@@ -134,7 +153,7 @@ export default function CheckoutPage() {
             </div>
 
             <input name="customer_name" placeholder="Full Name" value={form.customer_name} onChange={update} className="w-full rounded-xl border p-4 outline-none focus:border-black" />
-            <input name="email" type="email" placeholder="Email" value={form.email} onChange={update} className="w-full rounded-xl border p-4 outline-none focus:border-black" />
+            <input name="email" type="email" placeholder="Email" value={form.email} readOnly aria-readonly="true" className="w-full rounded-xl border bg-gray-50 p-4 outline-none" />
             <input name="phone" type="tel" placeholder="Phone" value={form.phone} onChange={update} className="w-full rounded-xl border p-4 outline-none focus:border-black" />
             <input name="address" placeholder="Address" value={form.address} onChange={update} className="w-full rounded-xl border p-4 outline-none focus:border-black" />
 
@@ -150,6 +169,10 @@ export default function CheckoutPage() {
             <div className="mb-6 flex justify-between"><span>Items</span><span>{itemCount}</span></div>
             <div className="mb-4 flex justify-between"><span>Subtotal</span><span>₹{subtotal.toLocaleString("en-IN")}</span></div>
             <div className="mb-4 flex justify-between"><span>Shipping</span><span className="text-green-600">FREE</span></div>
+            <div className="mb-6 rounded-2xl border border-[#e5ddd0] bg-[#fffaf1] p-4">
+              <p className="text-sm font-medium text-[#39362f]">Payment</p>
+              <p className="mt-1 text-sm text-[#746e63]">Cash on Delivery</p>
+            </div>
             <hr className="my-6" />
             <div className="mb-8 flex justify-between text-2xl font-semibold"><span>Total</span><span>₹{total.toLocaleString("en-IN")}</span></div>
             <button type="button" onClick={handlePlaceOrder} disabled={loading || items.length === 0} className="w-full rounded-full bg-black py-4 text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50">
