@@ -11,8 +11,8 @@ export default function NewArrivalsFixed() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const data = await getStoreProducts();
-        setProducts(data.filter((product) => product.new_arrival));
+        const data = await getStoreProducts({ newArrivalOnly: true, limit: 8 });
+        setProducts(data);
       } catch (error) {
         console.error(error);
       }
