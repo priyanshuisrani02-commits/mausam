@@ -19,6 +19,8 @@ type Order = {
   shipping: number;
   total: number;
   status: string;
+  payment_method: string;
+  payment_status: string;
   created_at: string;
 };
 
@@ -438,6 +440,12 @@ export default function OrderDetailsPage() {
               )
             )}
 
+          </div>
+
+          <div className="my-8 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+            <p className="text-sm text-gray-500">Payment</p>
+            <p className="mt-1 font-medium">{order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method}</p>
+            <p className="mt-1 text-sm text-gray-500">Status: {order.payment_status}</p>
           </div>
 
           {/* Status */}
