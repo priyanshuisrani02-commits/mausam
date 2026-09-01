@@ -38,16 +38,11 @@ export async function proxy(request: NextRequest) {
       );
     }
 
-    const email = user.email?.trim().toLowerCase() ?? "";
-    const role =
-      typeof user.app_metadata?.role === "string"
-        ? user.app_metadata.role.trim().toLowerCase()
-        : "";
+    const { data: isAdmin, error: adminCheckError } = await supabase.rpc(
+      "is_mausam_admin"
+    );
 
-    const isAdmin =
-      email === "mausamfes@gmail.com" || role === "admin";
-
-    if (!isAdmin) {
+    if (adminCheckError || !isAdmin) {
       await supabase.auth.signOut();
 
       return NextResponse.redirect(
